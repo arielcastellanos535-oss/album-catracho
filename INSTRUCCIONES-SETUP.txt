@@ -1,0 +1,35 @@
+ALBUM CATRACHO — Primer arranque
+================================
+
+1. Variables de entorno
+   Copia .env.example a .env.local y completa:
+   - NEXT_PUBLIC_SUPABASE_URL
+   - NEXT_PUBLIC_SUPABASE_ANON_KEY
+   - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+2. Base de datos Supabase
+   En el panel: SQL Editor → pega y ejecuta todo:
+   supabase/migrations/001_initial_schema.sql
+
+3. Auth Google
+   Supabase → Authentication → Providers → Google (activar)
+   Supabase → Authentication → URL Configuration:
+   - Site URL: http://localhost:3000
+   - Redirect URLs: http://localhost:3000/auth/callback
+
+4. Storage (opcional para imágenes)
+   Crea bucket public "stickers" y sube PNG/JPG.
+   Actualiza stickers.image_url en la tabla.
+
+5. Instalar y correr
+   cd C:\Users\usuario\Projects\panini-mvp
+   pnpm install
+   pnpm dev
+
+6. Marca y tema
+   - Logo y nombre: src/lib/theme.ts (brand.logoSrc, useTextLogo)
+   - Colores: src/app/globals.css (:root variables)
+   - Sobre nosotros: brand.about en theme.ts
+
+7. Abrir en Cursor
+   File → Open Folder → panini-mvp

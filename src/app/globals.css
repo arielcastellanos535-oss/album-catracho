@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/* Paleta provisional catracha — edita solo estas variables para rebrand */
+:root {
+  --color-primary: #0d5c3d;
+  --color-primary-foreground: #f5f9f6;
+  --color-accent: #0073cf;
+  --color-accent-foreground: #ffffff;
+  --color-background: #0a1628;
+  --color-surface: #12233d;
+  --color-muted: #8fa3b8;
+  --color-border: #2a4563;
+  --color-gold: #d4a017;
+  --color-silver: #9ca8b8;
+  --color-special: #6b4ce6;
+  --font-display: "Segoe UI", system-ui, sans-serif;
+  --font-body: "Segoe UI", system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --color-gold: var(--color-gold);
+  --color-silver: var(--color-silver);
+  --color-special: var(--color-special);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-primary-foreground);
+  font-family: var(--font-body);
+  min-height: 100dvh;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Brillo para cromos nuevos / especiales */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.sticker-shine {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}

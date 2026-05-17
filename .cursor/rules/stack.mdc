@@ -1,0 +1,19 @@
+---
+description: Stack MVP album Panini digital
+globs: **/*
+alwaysApply: true
+---
+
+# Stack
+
+- Next.js (App Router) + TypeScript + Tailwind + Framer Motion
+- Supabase: Auth, Postgres, Storage, RLS en tablas public
+- Deploy: Vercel
+- Imagenes de cromos: Supabase Storage + next/image
+
+# Convenciones
+
+- Variables de entorno en `.env.local`; nunca commitear secretos. Mantener `.env.example` actualizado.
+- `service_role` solo en servidor, nunca en cliente.
+- Preferir `execute_sql` / migraciones documentadas para cambios de schema.
+- MVP primero: un album, sobres simples, animaciones 2D; sin intercambio P2P en v1.

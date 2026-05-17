@@ -1,0 +1,41 @@
+ALBUM CATRACHO — Solo te falta activar Google (2 minutos)
+============================================================
+
+YA HECHO POR TI (no toques esto):
+- Base de datos con departamentos y 12 cromos
+- Archivo .env.local conectado a tu proyecto ALBUMCATRACHO
+
+TU UNICO PASO AHORA — Activar login con Google:
+-----------------------------------------------
+1. Abre este enlace en el navegador (inicia sesion en Supabase si pide):
+
+   https://supabase.com/dashboard/project/ysxxtiuewurrwnimjpoq/auth/providers
+
+2. Busca "Google" y enciende el interruptor (Enable).
+
+3. Si te pide Client ID y Secret de Google:
+   - Por ahora puedes usar el flujo que Supabase muestra en pantalla
+   - O dime y te guio a crear credenciales en Google Cloud
+
+4. Luego ve a "URL Configuration" (mismo menu Authentication):
+   https://supabase.com/dashboard/project/ysxxtiuewurrwnimjpoq/auth/url-configuration
+
+   Pon exactamente:
+   - Site URL: http://localhost:3000
+   - Redirect URLs: agrega esta linea:
+     http://localhost:3000/auth/callback
+
+5. Guarda (Save).
+
+ARRANCAR LA APP:
+----------------
+Abre PowerShell y pega:
+
+   cd C:\Users\usuario\Projects\panini-mvp
+   pnpm install
+   pnpm dev
+
+Abre el navegador en: http://localhost:3000
+Pulsa "Entrar con Google".
+
+Si algo falla, copia el mensaje de error y pegalo en el chat del agente.
