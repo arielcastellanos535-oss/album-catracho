@@ -11,7 +11,14 @@ export default function LoginPage() {
 
   async function loginWithGoogle() {
     setLoading(true);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
+    const defaultSiteUrl = "http://localhost:3000";
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL.startsWith("http")
+        ? process.env.NEXT_PUBLIC_SITE_URL
+        : typeof window !== "undefined" && window.location.protocol.startsWith("http")
+        ? window.location.origin
+        : defaultSiteUrl;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
