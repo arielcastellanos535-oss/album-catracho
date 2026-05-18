@@ -80,15 +80,16 @@ export function AlbumPageClient({
           return (
             <li key={s.id}>
               {pasted || o ? (
-                <StickerCard
-                  sticker={s}
-                  owned={o?.quantity ?? 0}
-                  pasted={pasted}
-                  seenAt={o?.seen_at ?? null}
-                  firstObtainedAt={o?.first_obtained_at}
-                  onPaste={o && !pasted ? () => paste(s.id) : undefined}
-                />
-              ) : (
+                    <StickerCard
+                      sticker={s}
+                      owned={o?.quantity ?? 0}
+                      pasted={pasted}
+                      seenAt={o?.seen_at ?? null}
+                      firstObtainedAt={o?.first_obtained_at}
+                      onPaste={o && !pasted ? () => paste(s.id) : undefined}
+                      departmentName={department.name}
+                    />
+                  ) : (
                 <article className="flex aspect-[5/7] items-center justify-center rounded-xl border border-dashed border-border bg-surface/50 text-muted">
                   #{s.number}
                 </article>

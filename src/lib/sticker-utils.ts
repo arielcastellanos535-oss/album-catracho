@@ -53,3 +53,14 @@ export function countMvpProgress(
 }
 
 export type StickerWithMeta = Sticker & { owned?: number; pasted?: boolean };
+
+export function ownedHighlightClass(rarity: StickerRarity): string {
+  switch (rarity) {
+    case "silver":
+      return "ring-2 ring-silver/40 shadow-[0_8px_30px_rgba(156,168,184,0.12)]";
+    case "special":
+      return "ring-2 ring-special/40 shadow-[0_10px_38px_rgba(107,76,230,0.14)]";
+    default:
+      return "ring-2 ring-green-600/25 shadow-[0_8px_30px_rgba(13,92,61,0.18)]";
+  }
+}
