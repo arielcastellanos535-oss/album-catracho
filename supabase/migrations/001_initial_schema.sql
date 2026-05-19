@@ -1,8 +1,33 @@
 -- Album Catracho — esquema MVP
 -- Ejecutar en Supabase SQL Editor o: supabase db push
 
-CREATE TYPE sticker_rarity AS ENUM ('common', 'silver', 'special');
-CREATE TYPE pack_type AS ENUM ('normal', 'silver', 'gold');
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'sticker_rarity'
+      AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE public.sticker_rarity AS ENUM ('common', 'silver', 'special');
+  END IF;
+END
+$$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_type t
+    JOIN pg_namespace n ON n.oid = t.typnamespace
+    WHERE t.typname = 'pack_type'
+      AND n.nspname = 'public'
+  ) THEN
+    CREATE TYPE public.pack_type AS ENUM ('normal', 'silver', 'gold');
+  END IF;
+END
+$$;
 
 -- Departamentos (18 Honduras; MVP activo en 2)
 CREATE TABLE departments (
