@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import TradingModule from "@/components/TradingModule";
 
-// Definimos la estructura exacta que responde el JOIN de Supabase para evitar el 'any'
 interface SupabaseStickerJoin {
   id: string;
   quantity: number;
@@ -34,10 +33,8 @@ export default async function TradingPage() {
       )
     `);
 
-  // Cast seguro del resultado al tipo de la interfaz que creamos arriba
   const typedStickers = (userStickersRaw as unknown as SupabaseStickerJoin[]) || [];
 
-  // 3. Mapeamos limpiamente sin usar 'any'
   const allStickers = typedStickers
     .map((us) => {
       if (!us.stickers) return null;
@@ -50,18 +47,55 @@ export default async function TradingPage() {
     })
     .filter((s): s is { id: string; name: string; department_id: string; quantity: number } => s !== null);
 
-  // 4. Obtener las subastas activas
-  const { data: activeAuctions } = await supabase
+  // 3. 🔥 ADAPTADO: Leer desde tu tabla real 'trade_offers'
+  // Filtramos solo ofertas públicas (target_user_id es nulo) y pendientes
+  const { data: activeTradesRaw } = await supabase
+    .from("trade_offers")
+    .select(`
+      id,
+      status,
+      offered:stickers!trade_offers_sticker_id_offered_fkey(name),
+      wanted:stickers!trade_offers_sticker_id_wanted_fkey(name)
+    `)
+    .eq("status", "pending")
+    .is("target_user_id", null)
+    .order("created_at", { ascending: false });
+
+  const activeTrades = (activeTradesRaw || []).map((t: any) => ({
+    id: t.id,
+    offered_name: t.offered?.name || "Cromo Desconocido",
+    wanted_name: t.wanted?.name || "Cromo Desconocido",
+  }));
+
+  // 4. Obtener las subastas activas adaptadas a tus columnas reales
+  const { data: activeAuctionsRaw } = await supabase
     .from("auctions")
-    .select("*")
+    .select(`
+      id,
+      min_bet,
+      highest_bid,
+      expires_at,
+      status,
+      stickers(name)
+    `)
     .eq("status", "active");
+
+  const activeAuctions = (activeAuctionsRaw || []).map((a: any) => ({
+    id: a.id,
+    sticker_name: a.stickers?.name || "Cromo en Subasta",
+    seller_name: "Streamer", 
+    highest_bid: a.highest_bid || a.min_bet || 10,
+    expires_at: a.expires_at,
+    status: a.status
+  }));
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 md:px-8">
       <TradingModule 
         departments={departments || []} 
         allStickers={allStickers} 
-        activeAuctions={activeAuctions || []} 
+        activeAuctions={activeAuctions}
+        activeTrades={activeTrades}
       />
     </main>
   );

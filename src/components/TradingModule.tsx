@@ -63,26 +63,55 @@ export default function TradingModule({
   // 🔥 REGLA DE ORO: Solo puedes OFRECER o SUBASTAR cromos donde tengas más de 1 (el primero está pegado)
   const userTradableStickers = allStickers.filter(s => s.quantity > 1);
 
-  // Función para publicar la oferta en el Mercado Público
+  // 📢 GUARDAR OFERTA DE INTERCAMBIO ADAPTADA A TRADE_OFFERS
   const handlePublishOffer = async () => {
     if (!offeredSticker || !wantedSticker) return;
     
     setIsSubmitting(true);
     try {
-      // Aquí conectaremos luego con un RPC o api route para insertar en tu tabla 'trades'
-      console.log("Insertando en Supabase...", {
-        offered_sticker_id: offeredSticker,
-        wanted_sticker_id: wantedSticker
-      });
-      
+      // 1. Obtener el ID del usuario de la sesión actual
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Generamos un string único porque tu columna ID espera un 'text' obligatorio
+      const newOfferId = crypto.randomUUID(); 
+
+      // 2. Insertamos apuntando a tus columnas reales de la tabla trade_offers
+      const { data, error } = await supabase
+        .from("trade_offers")
+        .insert([
+          { 
+            id: newOfferId,
+            user_id: user?.id || null, // Se vincula a user_profiles
+            sticker_id_offered: offeredSticker, 
+            sticker_id_wanted: wantedSticker,
+            status: "pending",
+            target_user_id: null, // null hace que sea una oferta global pública
+            parent_offer_id: null
+          }
+        ])
+        .select();
+
+      if (error) throw error;
+
+      // Actualización visual en caliente para la lista de la derecha
+      const offStickerObj = allStickers.find(s => s.id === offeredSticker);
+      const wanStickerObj = allStickers.find(s => s.id === wantedSticker);
+
+      const newOffer: TradeOffer = {
+        id: newOfferId,
+        offered_name: offStickerObj?.name || "Cromo",
+        wanted_name: wanStickerObj?.name || "Cromo"
+      };
+
+      setTradesList([newOffer, ...tradesList]);
       alert("¡Oferta publicada con éxito en el Mercado Global! 🎉");
-      // Limpiamos el formulario
+      
       setOfferedSticker('');
       setWantedSticker('');
       setSelectedDept('');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Hubo un error al publicar la oferta.");
+      alert(`Error al guardar en trade_offers: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
