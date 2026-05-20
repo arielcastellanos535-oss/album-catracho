@@ -1,16 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Sticker, UserSticker } from "@/types/database";
 import { StickerCard } from "@/components/StickerCard";
 import { isNewSticker } from "@/lib/sticker-utils";
 import { createClient } from "@/lib/supabase/client";
 
-type Row = UserSticker & { sticker: Sticker };
+type Row = UserSticker & { sticker: Sticker & { department?: { slug: string } } };
 type Tab = "new" | "all" | "dupes";
 
 export function CollectionClient({ items }: { items: Row[] }) {
   const [tab, setTab] = useState<Tab>("new");
+  const router = useRouter();
   const supabase = createClient();
 
   const filtered = useMemo(() => {
@@ -23,11 +25,15 @@ export function CollectionClient({ items }: { items: Row[] }) {
     return items;
   }, [items, tab]);
 
-  async function markSeen(stickerId: string) {
-    await supabase
-      .from("user_stickers")
-      .update({ seen_at: new Date().toISOString() })
-      .eq("sticker_id", stickerId);
+  async function pasteAndRedirect(stickerId: string, departmentSlug: string) {
+    const { error } = await supabase.rpc("paste_sticker", {
+      p_sticker_id: stickerId,
+    });
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    router.push(`/album/${departmentSlug}`);
   }
 
   const tabs: { id: Tab; label: string }[] = [
@@ -64,16 +70,13 @@ export function CollectionClient({ items }: { items: Row[] }) {
                 seenAt={row.seen_at}
                 firstObtainedAt={row.first_obtained_at}
                 compact
+                onPaste={() => {
+                  const departmentSlug = row.sticker.department?.slug;
+                  if (departmentSlug) {
+                    pasteAndRedirect(row.sticker_id, departmentSlug);
+                  }
+                }}
               />
-              {tab === "new" && !row.seen_at && (
-                <button
-                  type="button"
-                  className="mt-1 w-full text-xs text-accent underline"
-                  onClick={() => markSeen(row.sticker_id)}
-                >
-                  Marcar como visto
-                </button>
-              )}
             </li>
           ))}
         </ul>

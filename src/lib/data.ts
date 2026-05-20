@@ -48,10 +48,10 @@ export async function getUserStickers(userId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("user_stickers")
-    .select("*, sticker:stickers(*)")
+    .select("*, sticker:stickers(*, department:departments(slug))")
     .eq("user_id", userId);
   if (error) throw error;
-  return data as (UserSticker & { sticker: Sticker })[];
+  return data as (UserSticker & { sticker: Sticker & { department: { slug: string } } })[];
 }
 
 export async function getUserAlbumSlots(userId: string) {

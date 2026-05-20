@@ -85,15 +85,17 @@ export function StickerCard({
             Pegado
           </span>
         ) : null}
-        {owned > 0 && !pasted ? (
+        {owned > 0 ? (
           <div className="space-y-2">
-            <button
-              type="button"
-              onClick={onPaste}
-              className="w-full rounded-lg bg-accent py-1.5 text-xs font-semibold text-accent-foreground"
-            >
-              Pegar en álbum
-            </button>
+            {!pasted && (
+              <button
+                type="button"
+                onClick={onPaste}
+                className="w-full rounded-lg bg-accent py-1.5 text-xs font-semibold text-accent-foreground"
+              >
+                Pegar en álbum
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setPreviewOpen(true)}
