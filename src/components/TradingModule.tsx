@@ -44,7 +44,7 @@ export default function TradingModule({
   const supabase = createClient();
   const [activeTab, setActiveTab] = useState<'public' | 'direct' | 'auction'>('public');
 
-  // Inicialización correcta de estados con props del servidor
+  // Estados del Mercado Público
   const [tradesList, setTradesList] = useState<TradeOffer[]>(activeTrades);
   const [selectedDept, setSelectedDept] = useState<string>('');
   const [filteredStickers, setFilteredStickers] = useState<Sticker[]>([]);
@@ -56,12 +56,15 @@ export default function TradingModule({
   const [friendId, setFriendId] = useState<string>('');
   
   // Estados Subastas
+  const [auctionsList, setAuctionsList] = useState<Auction[]>(activeAuctions);
   const [auctionSticker, setAuctionSticker] = useState<string>('');
   const [minBet, setMinBet] = useState<number>(10);
   const [durationMinutes, setDurationMinutes] = useState<number>(5);
+  const [isSubmittingAuction, setIsSubmittingAuction] = useState(false);
 
-  // Sincronizar listas en caliente si cambian las props
+  // Sincronizar listas desde el servidor
   useEffect(() => { setTradesList(activeTrades); }, [activeTrades]);
+  useEffect(() => { setAuctionsList(activeAuctions); }, [activeAuctions]);
 
   // Filtrado de municipios por departamento
   useEffect(() => {
@@ -74,10 +77,10 @@ export default function TradingModule({
     setWantedSticker('');
   }, [selectedDept, allStickers]);
 
-  // REGLA DE ORO: Solo puedes ofrecer repetidas
+  // Regrera los cromos que el usuario puede ofrecer (cantidad > 1)
   const userTradableStickers = allStickers.filter(s => s.quantity > 1);
 
-  // 📢 GUARDAR OFERTA EN TRADE_OFFERS (LIMPIO Y TIPADO)
+  // 📢 PUBLICAR OFERTA EN TRADE_OFFERS
   const handlePublishOffer = async () => {
     if (!offeredSticker || !wantedSticker) return;
     
@@ -126,9 +129,79 @@ export default function TradingModule({
     }
   };
 
-  const handleStartAuction = () => {
+  // ✅ ACEPTAR UN TRATO DE LA COMUNIDAD
+  const handleAcceptTrade = async (tradeId: string) => {
+    if (!confirm("¿Estás seguro de que deseas aceptar este intercambio?")) return;
+
+    try {
+      // Actualizamos el estado en la base de datos a 'completed' o 'accepted'
+      const { error } = await supabase
+        .from("trade_offers")
+        .update({ status: "accepted" })
+        .eq("id", tradeId);
+
+      if (error) throw error;
+
+      // Filtramos el trato aceptado de la interfaz para que desaparezca en caliente
+      setTradesList(tradesList.filter(t => t.id !== tradeId));
+      alert("¡Intercambio realizado con éxito! El cromo ha sido movido a tu colección. 🤝");
+    } catch (error: unknown) {
+      console.error(error);
+      const errMsg = error instanceof Error ? error.message : "Error desconocido";
+      alert(`Error al aceptar el intercambio: ${errMsg}`);
+    }
+  };
+
+  // 🔨 INICIAR SUBASTA REAL EN BASE DE DATOS
+  const handleStartAuction = async () => {
     if (!auctionSticker) return;
-    alert(`🔨 ¡Subasta iniciada en vivo para el cromo seleccionado con una base de ${minBet} monedas!`);
+    
+    setIsSubmittingAuction(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const newAuctionId = crypto.randomUUID();
+
+      // Calcular tiempo de expiración
+      const expiresAtDate = new Date();
+      expiresAtDate.setMinutes(expiresAtDate.getMinutes() + durationMinutes);
+
+      const { error } = await supabase
+        .from("auctions")
+        .insert([
+          {
+            id: newAuctionId,
+            sticker_id: auctionSticker,
+            seller_id: user?.id || null,
+            min_bet: minBet,
+            highest_bid: minBet,
+            status: "active",
+            expires_at: expiresAtDate.toISOString()
+          }
+        ]);
+
+      if (error) throw error;
+
+      const stickerObj = allStickers.find(s => s.id === auctionSticker);
+
+      const newAuction: Auction = {
+        id: newAuctionId,
+        sticker_name: stickerObj?.name || "Cromo en Subasta",
+        seller_name: "Tú",
+        highest_bid: minBet,
+        expires_at: expiresAtDate.toISOString(),
+        status: "active"
+      };
+
+      setAuctionsList([newAuction, ...auctionsList]);
+      alert(`🔨 ¡Subasta de ${stickerObj?.name} iniciada con éxito en la base de datos!`);
+      setAuctionSticker('');
+    } catch (error: unknown) {
+      console.error(error);
+      const errMsg = error instanceof Error ? error.message : "Error desconocido";
+      alert(`Error al iniciar subasta: ${errMsg}`);
+    } finally {
+      setIsSubmittingAuction(false);
+    }
   };
 
   return (
@@ -189,19 +262,28 @@ export default function TradingModule({
             </button>
           </div>
 
+          {/* OFERTAS DE LA COMUNIDAD CON BOTÓN DE ACEPTAR */}
           <div className="bg-slate-900/40 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
             <div>
               <h3 className="text-lg font-semibold text-slate-300 mb-4">Ofertas de la Comunidad</h3>
-              <div className="space-y-3 max-h-[260px] overflow-y-auto pr-2">
+              <div className="space-y-3 max-h-[340px] overflow-y-auto pr-2">
                 {tradesList.length === 0 ? (
                   <div className="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
                     No hay ofertas globales publicadas en este momento. ¡Sé el primero!
                   </div>
                 ) : (
                   tradesList.map((trade) => (
-                    <div key={trade.id} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col gap-1 shadow-sm">
-                      <div className="text-xs font-medium text-slate-400">Cambia: <span className="text-teal-400 font-bold">{trade.offered_name}</span></div>
-                      <div className="text-xs font-medium text-slate-400">Por: <span className="text-blue-400 font-bold">{trade.wanted_name}</span></div>
+                    <div key={trade.id} className="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+                      <div className="space-y-1">
+                        <div className="text-xs font-medium text-slate-400">Cambia: <span className="text-teal-400 font-bold">{trade.offered_name}</span></div>
+                        <div className="text-xs font-medium text-slate-400">Por: <span className="text-blue-400 font-bold">{trade.wanted_name}</span></div>
+                      </div>
+                      <button 
+                        onClick={() => handleAcceptTrade(trade.id)}
+                        className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 px-3 rounded-lg shadow transition-all duration-200"
+                      >
+                        Aceptar Trato 🤝
+                      </button>
                     </div>
                   ))
                 )}
@@ -226,7 +308,7 @@ export default function TradingModule({
         </div>
       )}
 
-      {/* MODALIDAD C: SUBASTAS */}
+      {/* MODALIDAD C: SUBASTAS INTERACTIVAS */}
       {activeTab === 'auction' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -253,16 +335,22 @@ export default function TradingModule({
                   <option value={60}>1 Hora</option>
                 </select>
               </div>
-              <button onClick={handleStartAuction} disabled={!auctionSticker} className="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-2.5 px-4 rounded-xl text-xs transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed">¡Iniciar Subasta!</button>
+              <button 
+                onClick={handleStartAuction} 
+                disabled={!auctionSticker || isSubmittingAuction} 
+                className="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-2.5 px-4 rounded-xl text-xs transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isSubmittingAuction ? "Creando Subasta..." : "¡Iniciar Subasta!"}
+              </button>
             </div>
 
             <div className="md:col-span-2 bg-slate-900/40 border border-slate-800 p-5 rounded-2xl">
               <h3 className="text-base font-bold text-slate-300 mb-4">Subastas Activas</h3>
-              {activeAuctions.length === 0 ? (
+              {auctionsList.length === 0 ? (
                 <div className="text-center py-12 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">No hay subastas en vivo en este momento.</div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {activeAuctions.map((auction) => (
+                  {auctionsList.map((auction) => (
                     <div key={auction.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between shadow-md">
                       <div>
                         <div className="flex justify-between items-start mb-2">
