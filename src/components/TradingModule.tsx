@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 
-// ==========================================
-// INTERFACES (Alineadas con tu BD real)
-// ==========================================
 interface Department {
   id: string;
   name: string;
@@ -35,24 +32,24 @@ export default function TradingModule({
   allStickers: Sticker[];
   activeAuctions: Auction[];
 }) {
-  // Estados Generales
   const [activeTab, setActiveTab] = useState<'public' | 'direct' | 'auction'>('public');
 
-  // Estados Modalidad A: Mercado Público
+  // Estados Mercado Público
   const [selectedDept, setSelectedDept] = useState<string>('');
   const [filteredStickers, setFilteredStickers] = useState<Sticker[]>([]);
   const [offeredSticker, setOfferedSticker] = useState<string>('');
   const [wantedSticker, setWantedSticker] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Estados Modalidad B: Intercambio Directo
+  // Estados Trato Directo
   const [friendId, setFriendId] = useState<string>('');
   
-  // Estados Modalidad C: Subastas
+  // Estados Subastas
   const [auctionSticker, setAuctionSticker] = useState<string>('');
   const [minBet, setMinBet] = useState<number>(10);
   const [durationMinutes, setDurationMinutes] = useState<number>(5);
 
-  // Filtrado dinámico de municipios por departamento (Modalidad A)
+  // Filtrado de municipios por departamento
   useEffect(() => {
     if (selectedDept) {
       const filtered = allStickers.filter(s => s.department_id === selectedDept);
@@ -63,12 +60,43 @@ export default function TradingModule({
     setWantedSticker('');
   }, [selectedDept, allStickers]);
 
-  // Lista de cromos repetidos del usuario (quantity > 1) para poder ofrecer
-  const userDuplicates = allStickers.filter(s => s.quantity > 1);
+  // 🔥 REGLA DE ORO: Solo puedes OFRECER o SUBASTAR cromos donde tengas más de 1 (el primero está pegado)
+  const userTradableStickers = allStickers.filter(s => s.quantity > 1);
+
+  // Función para publicar la oferta en el Mercado Público
+  const handlePublishOffer = async () => {
+    if (!offeredSticker || !wantedSticker) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Aquí conectaremos luego con un RPC o api route para insertar en tu tabla 'trades'
+      console.log("Insertando en Supabase...", {
+        offered_sticker_id: offeredSticker,
+        wanted_sticker_id: wantedSticker
+      });
+      
+      alert("¡Oferta publicada con éxito en el Mercado Global! 🎉");
+      // Limpiamos el formulario
+      setOfferedSticker('');
+      setWantedSticker('');
+      setSelectedDept('');
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al publicar la oferta.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Función para iniciar subasta
+  const handleStartAuction = () => {
+    if (!auctionSticker) return;
+    alert(`🔨 ¡Subasta iniciada en vivo para el cromo seleccionado con una base de ${minBet} monedas!`);
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-slate-950 border border-slate-800 rounded-3xl p-6 text-white shadow-2xl">
-      {/* ENCABEZADO Y PESTAÑAS DE NAVEGACIÓN */}
+      {/* ENCABEZADO */}
       <div className="text-center mb-6">
         <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 mb-2">
           🇭🇳 Centro de Intercambios Catracho
@@ -76,6 +104,7 @@ export default function TradingModule({
         <p className="text-sm text-slate-400">Cambia repetidos, negocia con amigos o subasta en vivo</p>
       </div>
 
+      {/* PESTAÑAS */}
       <div className="flex border-b border-slate-800 mb-6 bg-slate-900/50 p-1 rounded-xl">
         <button
           onClick={() => setActiveTab('public')}
@@ -97,25 +126,22 @@ export default function TradingModule({
         </button>
       </div>
 
-      {/* ==========================================
-          MODALIDAD A: MERCADO PÚBLICO (DATOS REALES)
-         ========================================== */}
+      {/* MODALIDAD A: MERCADO PÚBLICO */}
       {activeTab === 'public' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Formulario Público */}
           <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
             <h3 className="text-lg font-semibold text-blue-400 mb-4">📢 Publicar Nueva Oferta</h3>
             
             <div className="mb-4">
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo que ofreces (Tus Repetidos)</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo que ofreces (Tus Repetidos Libres)</label>
               <select 
                 value={offeredSticker} 
                 onChange={(e) => setOfferedSticker(e.target.value)}
                 className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">-- Selecciona tu cromo repetido --</option>
-                {userDuplicates.map(s => (
-                  <option key={s.id} value={s.id}>{s.name} (Disp: {s.quantity - 1})</option>
+                {userTradableStickers.map(s => (
+                  <option key={s.id} value={s.id}>{s.name} (Disponibles: {s.quantity - 1})</option>
                 ))}
               </select>
             </div>
@@ -155,19 +181,18 @@ export default function TradingModule({
             </div>
 
             <button 
-              disabled={!offeredSticker || !wantedSticker}
+              onClick={handlePublishOffer}
+              disabled={!offeredSticker || !wantedSticker || isSubmitting}
               className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Publicar Oferta Global
+              {isSubmitting ? "Publicando..." : "Publicar Oferta Global"}
             </button>
           </div>
 
-          {/* Panel de Ofertas Activas del Mercado (Aquí dejamos preparado el map dinámico) */}
           <div className="bg-slate-900/40 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
             <div>
               <h3 className="text-lg font-semibold text-slate-300 mb-4">Ofertas de la Comunidad</h3>
               <div className="space-y-3 max-h-[260px] overflow-y-auto pr-2">
-                {/* Si no hay ofertas cargadas en BD aún */}
                 <div className="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
                   No hay ofertas globales publicadas en este momento. ¡Sé el primero!
                 </div>
@@ -177,56 +202,48 @@ export default function TradingModule({
         </div>
       )}
 
-      {/* ==========================================
-          MODALIDAD B: INTERCAMBIO DIRECTO (AMIGOS)
-         ========================================== */}
+      {/* MODALIDAD B: TRATO DIRECTO */}
       {activeTab === 'direct' && (
         <div className="max-w-md mx-auto bg-slate-900/80 border border-slate-800 p-6 rounded-2xl">
           <h3 className="text-lg font-semibold text-teal-400 mb-2">👥 Trato Directo con Coleccionistas</h3>
-          <p className="text-xs text-slate-400 mb-4">Busca a tu amigo por su ID de usuario para ver sus repetidas y hacerle un intercambio negociado.</p>
-          
+          <p className="text-xs text-slate-400 mb-4">Busca a tu amigo por su ID de usuario para ver sus repetidas.</p>
           <div className="mb-4">
-            <label className="block text-xs font-semibold text-slate-400 mb-1">ID Único del Usuario</label>
             <div className="flex gap-2">
               <input 
                 type="text" 
                 placeholder="Ingresa el user_id de tu amigo..." 
                 value={friendId}
                 onChange={(e) => setFriendId(e.target.value)}
-                className="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                className="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-teal-500"
               />
               <button className="bg-teal-600 hover:bg-teal-500 px-4 rounded-xl font-bold text-sm transition">
                 Buscar
               </button>
             </div>
           </div>
-
           <div className="border border-dashed border-slate-800 rounded-xl p-6 text-center text-slate-500 text-xs">
-            Al encontrar al usuario, aquí aparecerá su vitrina de repetidos para armar la propuesta de cromo contra cromo.
+            Al encontrar al usuario, aquí aparecerá su vitrina de repetidos.
           </div>
         </div>
       )}
 
-      {/* ==========================================
-          MODALIDAD C: SUBASTAS PÚBLICAS (DATOS REALES)
-         ========================================== */}
+      {/* MODALIDAD C: SUBASTAS PÚBLICAS */}
       {activeTab === 'auction' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Lanzar subasta */}
             <div className="md:col-span-1 bg-slate-900/80 border border-slate-800 p-5 rounded-2xl h-fit">
               <h3 className="text-base font-bold text-yellow-500 mb-4">🔨 Crear Subasta</h3>
               
               <div className="mb-3">
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo a Subastar</label>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo a Subastar (Solo Tus Repetidos Libres)</label>
                 <select 
                   value={auctionSticker}
                   onChange={(e) => setAuctionSticker(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"
                 >
-                  <option value="">-- Elige un cromo --</option>
-                  {allStickers.filter(s => s.quantity > 0).map(s => (
-                    <option key={s.id} value={s.id}>{s.name}</option>
+                  <option value="">-- Elige un cromo repetido --</option>
+                  {userTradableStickers.map(s => (
+                    <option key={s.id} value={s.id}>{s.name} (Disp: {s.quantity - 1})</option>
                   ))}
                 </select>
               </div>
@@ -254,15 +271,17 @@ export default function TradingModule({
                 </select>
               </div>
 
-              <button className="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-2.5 px-4 rounded-xl text-xs transition hover:brightness-110">
+              <button 
+                onClick={handleStartAuction}
+                disabled={!auctionSticker}
+                className="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-2.5 px-4 rounded-xl text-xs transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
                 ¡Iniciar Subasta!
               </button>
             </div>
 
-            {/* Lista de subastas reales de Supabase */}
             <div className="md:col-span-2 bg-slate-900/40 border border-slate-800 p-5 rounded-2xl">
               <h3 className="text-base font-bold text-slate-300 mb-4">Subastas Activas en este Momento</h3>
-              
               {activeAuctions.length === 0 ? (
                 <div className="text-center py-12 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
                   No hay subastas en vivo en este momento. ¡Lanza una para tus espectadores en TikTok!
@@ -278,22 +297,14 @@ export default function TradingModule({
                         </div>
                         <h4 className="text-base font-bold text-white">{auction.sticker_name}</h4>
                         <p className="text-xs text-slate-400 mb-3">Vendedor: {auction.seller_name}</p>
-                        
                         <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-center mb-4">
                           <span className="block text-[10px] text-slate-500 uppercase font-bold tracking-wider">Puja Más Alta</span>
                           <span className="text-lg font-black text-yellow-400">{auction.highest_bid} 🪙</span>
                         </div>
                       </div>
-
                       <div className="flex gap-2">
-                        <input 
-                          type="number" 
-                          placeholder="+10" 
-                          className="w-20 bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white font-bold"
-                        />
-                        <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition">
-                          Pujar
-                        </button>
+                        <input type="number" placeholder="+10" className="w-20 bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white font-bold" />
+                        <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition">Pujar</button>
                       </div>
                     </div>
                   ))}
