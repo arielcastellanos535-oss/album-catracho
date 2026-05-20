@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { createClient } from "@/lib/supabase/client";
 
 interface Department {
   id: string;
@@ -23,18 +24,28 @@ interface Auction {
   status: string;
 }
 
+interface TradeOffer {
+  id: string;
+  offered_name: string;
+  wanted_name: string;
+}
+
 export default function TradingModule({ 
   departments = [], 
   allStickers = [],
-  activeAuctions = []
+  activeAuctions = [],
+  activeTrades = []
 }: { 
   departments: Department[]; 
   allStickers: Sticker[];
   activeAuctions: Auction[];
+  activeTrades: TradeOffer[];
 }) {
+  const supabase = createClient();
   const [activeTab, setActiveTab] = useState<'public' | 'direct' | 'auction'>('public');
 
-  // Estados Mercado Público
+  // Inicialización correcta de estados con props del servidor
+  const [tradesList, setTradesList] = useState<TradeOffer[]>(activeTrades);
   const [selectedDept, setSelectedDept] = useState<string>('');
   const [filteredStickers, setFilteredStickers] = useState<Sticker[]>([]);
   const [offeredSticker, setOfferedSticker] = useState<string>('');
@@ -49,6 +60,9 @@ export default function TradingModule({
   const [minBet, setMinBet] = useState<number>(10);
   const [durationMinutes, setDurationMinutes] = useState<number>(5);
 
+  // Sincronizar listas en caliente si cambian las props
+  useEffect(() => { setTradesList(activeTrades); }, [activeTrades]);
+
   // Filtrado de municipios por departamento
   useEffect(() => {
     if (selectedDept) {
@@ -60,40 +74,34 @@ export default function TradingModule({
     setWantedSticker('');
   }, [selectedDept, allStickers]);
 
-  // 🔥 REGLA DE ORO: Solo puedes OFRECER o SUBASTAR cromos donde tengas más de 1 (el primero está pegado)
+  // REGLA DE ORO: Solo puedes ofrecer repetidas
   const userTradableStickers = allStickers.filter(s => s.quantity > 1);
 
-  // 📢 GUARDAR OFERTA DE INTERCAMBIO ADAPTADA A TRADE_OFFERS
+  // 📢 GUARDAR OFERTA EN TRADE_OFFERS (LIMPIO Y TIPADO)
   const handlePublishOffer = async () => {
     if (!offeredSticker || !wantedSticker) return;
     
     setIsSubmitting(true);
     try {
-      // 1. Obtener el ID del usuario de la sesión actual
       const { data: { user } } = await supabase.auth.getUser();
-
-      // Generamos un string único porque tu columna ID espera un 'text' obligatorio
       const newOfferId = crypto.randomUUID(); 
 
-      // 2. Insertamos apuntando a tus columnas reales de la tabla trade_offers
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("trade_offers")
         .insert([
           { 
             id: newOfferId,
-            user_id: user?.id || null, // Se vincula a user_profiles
+            user_id: user?.id || null,
             sticker_id_offered: offeredSticker, 
             sticker_id_wanted: wantedSticker,
             status: "pending",
-            target_user_id: null, // null hace que sea una oferta global pública
+            target_user_id: null,
             parent_offer_id: null
           }
-        ])
-        .select();
+        ]);
 
       if (error) throw error;
 
-      // Actualización visual en caliente para la lista de la derecha
       const offStickerObj = allStickers.find(s => s.id === offeredSticker);
       const wanStickerObj = allStickers.find(s => s.id === wantedSticker);
 
@@ -109,15 +117,15 @@ export default function TradingModule({
       setOfferedSticker('');
       setWantedSticker('');
       setSelectedDept('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      alert(`Error al guardar en trade_offers: ${error.message}`);
+      const errMsg = error instanceof Error ? error.message : "Error desconocido";
+      alert(`Error al guardar en trade_offers: ${errMsg}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Función para iniciar subasta
   const handleStartAuction = () => {
     if (!auctionSticker) return;
     alert(`🔨 ¡Subasta iniciada en vivo para el cromo seleccionado con una base de ${minBet} monedas!`);
@@ -135,24 +143,9 @@ export default function TradingModule({
 
       {/* PESTAÑAS */}
       <div className="flex border-b border-slate-800 mb-6 bg-slate-900/50 p-1 rounded-xl">
-        <button
-          onClick={() => setActiveTab('public')}
-          className={`flex-1 py-3 text-sm font-bold rounded-lg transition ${activeTab === 'public' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
-        >
-          🌐 Mercado Público
-        </button>
-        <button
-          onClick={() => setActiveTab('direct')}
-          className={`flex-1 py-3 text-sm font-bold rounded-lg transition ${activeTab === 'direct' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
-        >
-          👥 Trato Directo
-        </button>
-        <button
-          onClick={() => setActiveTab('auction')}
-          className={`flex-1 py-3 text-sm font-bold rounded-lg transition ${activeTab === 'auction' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
-        >
-          🔨 Subastas en Vivo
-        </button>
+        <button onClick={() => setActiveTab('public')} className={`flex-1 py-3 text-sm font-bold rounded-lg transition ${activeTab === 'public' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>🌐 Mercado Público</button>
+        <button onClick={() => setActiveTab('direct')} className={`flex-1 py-3 text-sm font-bold rounded-lg transition ${activeTab === 'direct' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>👥 Trato Directo</button>
+        <button onClick={() => setActiveTab('auction')} className={`flex-1 py-3 text-sm font-bold rounded-lg transition ${activeTab === 'auction' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>🔨 Subastas en Vivo</button>
       </div>
 
       {/* MODALIDAD A: MERCADO PÚBLICO */}
@@ -163,11 +156,7 @@ export default function TradingModule({
             
             <div className="mb-4">
               <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo que ofreces (Tus Repetidos Libres)</label>
-              <select 
-                value={offeredSticker} 
-                onChange={(e) => setOfferedSticker(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500"
-              >
+              <select value={offeredSticker} onChange={(e) => setOfferedSticker(e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500">
                 <option value="">-- Selecciona tu cromo repetido --</option>
                 {userTradableStickers.map(s => (
                   <option key={s.id} value={s.id}>{s.name} (Disponibles: {s.quantity - 1})</option>
@@ -177,11 +166,7 @@ export default function TradingModule({
 
             <div className="mb-4">
               <label className="block text-xs font-semibold text-slate-400 mb-1">Buscar por Departamento</label>
-              <select 
-                value={selectedDept} 
-                onChange={(e) => setSelectedDept(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500"
-              >
+              <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500">
                 <option value="">-- Elige Departamento --</option>
                 {departments.map(d => (
                   <option key={d.id} value={d.id}>{d.name}</option>
@@ -191,29 +176,15 @@ export default function TradingModule({
 
             <div className="mb-5">
               <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo que pides (Municipio)</label>
-              <select 
-                value={wantedSticker} 
-                onChange={(e) => setWantedSticker(e.target.value)}
-                disabled={!selectedDept}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 disabled:opacity-40"
-              >
+              <select value={wantedSticker} onChange={(e) => setWantedSticker(e.target.value)} disabled={!selectedDept} className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-blue-500 disabled:opacity-40">
                 <option value="">-- {selectedDept ? 'Elige el Municipio' : 'Primero elige departamento'} --</option>
-                {filteredStickers.map(s => {
-                  const yaLoTiene = s.quantity > 0;
-                  return (
-                    <option key={s.id} value={s.id}>
-                      {s.name} {yaLoTiene ? '✅ (Ya lo tienes)' : '❌ (Te falta!)'}
-                    </option>
-                  );
-                })}
+                {filteredStickers.map(s => (
+                  <option key={s.id} value={s.id}>{s.name} {s.quantity > 0 ? '✅ (Ya lo tienes)' : '❌ (Te falta!)'}</option>
+                ))}
               </select>
             </div>
 
-            <button 
-              onClick={handlePublishOffer}
-              disabled={!offeredSticker || !wantedSticker || isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
+            <button onClick={handlePublishOffer} disabled={!offeredSticker || !wantedSticker || isSubmitting} className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed">
               {isSubmitting ? "Publicando..." : "Publicar Oferta Global"}
             </button>
           </div>
@@ -222,9 +193,18 @@ export default function TradingModule({
             <div>
               <h3 className="text-lg font-semibold text-slate-300 mb-4">Ofertas de la Comunidad</h3>
               <div className="space-y-3 max-h-[260px] overflow-y-auto pr-2">
-                <div className="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
-                  No hay ofertas globales publicadas en este momento. ¡Sé el primero!
-                </div>
+                {tradesList.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
+                    No hay ofertas globales publicadas en este momento. ¡Sé el primero!
+                  </div>
+                ) : (
+                  tradesList.map((trade) => (
+                    <div key={trade.id} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col gap-1 shadow-sm">
+                      <div className="text-xs font-medium text-slate-400">Cambia: <span className="text-teal-400 font-bold">{trade.offered_name}</span></div>
+                      <div className="text-xs font-medium text-slate-400">Por: <span className="text-blue-400 font-bold">{trade.wanted_name}</span></div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -238,83 +218,48 @@ export default function TradingModule({
           <p className="text-xs text-slate-400 mb-4">Busca a tu amigo por su ID de usuario para ver sus repetidas.</p>
           <div className="mb-4">
             <div className="flex gap-2">
-              <input 
-                type="text" 
-                placeholder="Ingresa el user_id de tu amigo..." 
-                value={friendId}
-                onChange={(e) => setFriendId(e.target.value)}
-                className="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-teal-500"
-              />
-              <button className="bg-teal-600 hover:bg-teal-500 px-4 rounded-xl font-bold text-sm transition">
-                Buscar
-              </button>
+              <input type="text" placeholder="Ingresa el user_id de tu amigo..." value={friendId} onChange={(e) => setFriendId(e.target.value)} className="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-teal-500" />
+              <button className="bg-teal-600 hover:bg-teal-500 px-4 rounded-xl font-bold text-sm transition">Buscar</button>
             </div>
           </div>
-          <div className="border border-dashed border-slate-800 rounded-xl p-6 text-center text-slate-500 text-xs">
-            Al encontrar al usuario, aquí aparecerá su vitrina de repetidos.
-          </div>
+          <div className="border border-dashed border-slate-800 rounded-xl p-6 text-center text-slate-500 text-xs">Al encontrar al usuario, aquí aparecerá su vitrina de repetidos.</div>
         </div>
       )}
 
-      {/* MODALIDAD C: SUBASTAS PÚBLICAS */}
+      {/* MODALIDAD C: SUBASTAS */}
       {activeTab === 'auction' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1 bg-slate-900/80 border border-slate-800 p-5 rounded-2xl h-fit">
               <h3 className="text-base font-bold text-yellow-500 mb-4">🔨 Crear Subasta</h3>
-              
               <div className="mb-3">
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo a Subastar (Solo Tus Repetidos Libres)</label>
-                <select 
-                  value={auctionSticker}
-                  onChange={(e) => setAuctionSticker(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"
-                >
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo a Subastar</label>
+                <select value={auctionSticker} onChange={(e) => setAuctionSticker(e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
                   <option value="">-- Elige un cromo repetido --</option>
                   {userTradableStickers.map(s => (
                     <option key={s.id} value={s.id}>{s.name} (Disp: {s.quantity - 1})</option>
                   ))}
                 </select>
               </div>
-
               <div className="mb-3">
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Puja Mínima (Monedas)</label>
-                <input 
-                  type="number" 
-                  value={minBet}
-                  onChange={(e) => setMinBet(parseInt(e.target.value) || 0)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"
-                />
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Puja Mínima</label>
+                <input type="number" value={minBet} onChange={(e) => setMinBet(parseInt(e.target.value) || 0)} className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white" />
               </div>
-
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-slate-400 mb-1">Duración (Minutos)</label>
-                <select 
-                  value={durationMinutes}
-                  onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"
-                >
-                  <option value={1}>1 Minuto (Prueba)</option>
-                  <option value={5}>5 Minutos (Stream)</option>
+                <select value={durationMinutes} onChange={(e) => setDurationMinutes(parseInt(e.target.value))} className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                  <option value={1}>1 Minuto</option>
+                  <option value={5}>5 Minutos</option>
                   <option value={60}>1 Hora</option>
                 </select>
               </div>
-
-              <button 
-                onClick={handleStartAuction}
-                disabled={!auctionSticker}
-                className="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-2.5 px-4 rounded-xl text-xs transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                ¡Iniciar Subasta!
-              </button>
+              <button onClick={handleStartAuction} disabled={!auctionSticker} className="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-2.5 px-4 rounded-xl text-xs transition hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed">¡Iniciar Subasta!</button>
             </div>
 
             <div className="md:col-span-2 bg-slate-900/40 border border-slate-800 p-5 rounded-2xl">
-              <h3 className="text-base font-bold text-slate-300 mb-4">Subastas Activas en este Momento</h3>
+              <h3 className="text-base font-bold text-slate-300 mb-4">Subastas Activas</h3>
               {activeAuctions.length === 0 ? (
-                <div className="text-center py-12 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
-                  No hay subastas en vivo en este momento. ¡Lanza una para tus espectadores en TikTok!
-                </div>
+                <div className="text-center py-12 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">No hay subastas en vivo en este momento.</div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {activeAuctions.map((auction) => (

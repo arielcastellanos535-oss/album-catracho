@@ -11,6 +11,23 @@ interface SupabaseStickerJoin {
   } | null;
 }
 
+// Interfaces de tipado estricto para evitar el uso de 'any'
+interface SupabaseTradeRow {
+  id: string;
+  status: string | null;
+  offered: { name: string } | { name: string }[] | null;
+  wanted: { name: string } | { name: string }[] | null;
+}
+
+interface SupabaseAuctionRow {
+  id: string;
+  min_bet: number | null;
+  highest_bid: number | null;
+  expires_at: string;
+  status: string | null;
+  stickers: { name: string } | { name: string }[] | null;
+}
+
 export default async function TradingPage() {
   const supabase = await createClient();
 
@@ -47,8 +64,7 @@ export default async function TradingPage() {
     })
     .filter((s): s is { id: string; name: string; department_id: string; quantity: number } => s !== null);
 
-  // 3. 🔥 ADAPTADO: Leer desde tu tabla real 'trade_offers'
-  // Filtramos solo ofertas públicas (target_user_id es nulo) y pendientes
+  // 3. Leer desde tu tabla real 'trade_offers' con tipado explícito
   const { data: activeTradesRaw } = await supabase
     .from("trade_offers")
     .select(`
@@ -61,13 +77,19 @@ export default async function TradingPage() {
     .is("target_user_id", null)
     .order("created_at", { ascending: false });
 
-  const activeTrades = (activeTradesRaw || []).map((t: any) => ({
-    id: t.id,
-    offered_name: t.offered?.name || "Cromo Desconocido",
-    wanted_name: t.wanted?.name || "Cromo Desconocido",
-  }));
+  const typedTrades = (activeTradesRaw as unknown as SupabaseTradeRow[]) || [];
 
-  // 4. Obtener las subastas activas adaptadas a tus columnas reales
+  const activeTrades = typedTrades.map((t) => {
+    const offeredName = Array.isArray(t.offered) ? t.offered[0]?.name : t.offered?.name;
+    const wantedName = Array.isArray(t.wanted) ? t.wanted[0]?.name : t.wanted?.name;
+    return {
+      id: t.id,
+      offered_name: offeredName || "Cromo Desconocido",
+      wanted_name: wantedName || "Cromo Desconocido",
+    };
+  });
+
+  // 4. Obtener las subastas activas con tipado explícito
   const { data: activeAuctionsRaw } = await supabase
     .from("auctions")
     .select(`
@@ -80,14 +102,19 @@ export default async function TradingPage() {
     `)
     .eq("status", "active");
 
-  const activeAuctions = (activeAuctionsRaw || []).map((a: any) => ({
-    id: a.id,
-    sticker_name: a.stickers?.name || "Cromo en Subasta",
-    seller_name: "Streamer", 
-    highest_bid: a.highest_bid || a.min_bet || 10,
-    expires_at: a.expires_at,
-    status: a.status
-  }));
+  const typedAuctions = (activeAuctionsRaw as unknown as SupabaseAuctionRow[]) || [];
+
+  const activeAuctions = typedAuctions.map((a) => {
+    const stickerName = Array.isArray(a.stickers) ? a.stickers[0]?.name : a.stickers?.name;
+    return {
+      id: a.id,
+      sticker_name: stickerName || "Cromo en Subasta",
+      seller_name: "Streamer", 
+      highest_bid: a.highest_bid || a.min_bet || 10,
+      expires_at: a.expires_at,
+      status: a.status || "active"
+    };
+  });
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 md:px-8">
