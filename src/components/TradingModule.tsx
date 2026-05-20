@@ -14,7 +14,7 @@ interface Sticker {
   id: string;
   name: string;
   department_id: string;
-  quantity: number; // Tu columna corregida de cantidad
+  quantity: number; 
 }
 
 interface Auction {
@@ -98,15 +98,14 @@ export default function TradingModule({
       </div>
 
       {/* ==========================================
-          MODALIDAD A: MERCADO PÚBLICO
+          MODALIDAD A: MERCADO PÚBLICO (DATOS REALES)
          ========================================== */}
       {activeTab === 'public' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Formulario Bonito e Intuitivo */}
+          {/* Formulario Público */}
           <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
             <h3 className="text-lg font-semibold text-blue-400 mb-4">📢 Publicar Nueva Oferta</h3>
             
-            {/* Cromo Duplicado que Ofrece */}
             <div className="mb-4">
               <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo que ofreces (Tus Repetidos)</label>
               <select 
@@ -121,7 +120,6 @@ export default function TradingModule({
               </select>
             </div>
 
-            {/* Selector de Departamento de Destino */}
             <div className="mb-4">
               <label className="block text-xs font-semibold text-slate-400 mb-1">Buscar por Departamento</label>
               <select 
@@ -136,7 +134,6 @@ export default function TradingModule({
               </select>
             </div>
 
-            {/* Selector de Municipio Filtrado */}
             <div className="mb-5">
               <label className="block text-xs font-semibold text-slate-400 mb-1">Cromo que pides (Municipio)</label>
               <select 
@@ -165,22 +162,14 @@ export default function TradingModule({
             </button>
           </div>
 
-          {/* Panel de Ofertas Activas del Mercado */}
+          {/* Panel de Ofertas Activas del Mercado (Aquí dejamos preparado el map dinámico) */}
           <div className="bg-slate-900/40 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
             <div>
               <h3 className="text-lg font-semibold text-slate-300 mb-4">Ofertas de la Comunidad</h3>
               <div className="space-y-3 max-h-[260px] overflow-y-auto pr-2">
-                {/* Ejemplo de item de mercado */}
-                <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs">
-                  <div>
-                    <p className="font-semibold text-slate-400">Usuario_Catracho54 ofrece:</p>
-                    <p className="text-sm font-bold text-teal-400">San Pedro Sula</p>
-                    <p className="font-semibold text-slate-400 mt-1">A cambio busca:</p>
-                    <p className="text-sm font-bold text-yellow-500">Valle de Ángeles</p>
-                  </div>
-                  <button className="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-lg font-bold text-white transition">
-                    Aceptar
-                  </button>
+                {/* Si no hay ofertas cargadas en BD aún */}
+                <div className="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
+                  No hay ofertas globales publicadas en este momento. ¡Sé el primero!
                 </div>
               </div>
             </div>
@@ -219,7 +208,7 @@ export default function TradingModule({
       )}
 
       {/* ==========================================
-          MODALIDAD C: SUBASTAS PÚBLICAS
+          MODALIDAD C: SUBASTAS PÚBLICAS (DATOS REALES)
          ========================================== */}
       {activeTab === 'auction' && (
         <div className="space-y-6">
@@ -270,40 +259,46 @@ export default function TradingModule({
               </button>
             </div>
 
-            {/* Lista de subastas activas */}
+            {/* Lista de subastas reales de Supabase */}
             <div className="md:col-span-2 bg-slate-900/40 border border-slate-800 p-5 rounded-2xl">
               <h3 className="text-base font-bold text-slate-300 mb-4">Subastas Activas en este Momento</h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Tarjeta de Subasta (Simulada para visualización) */}
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between shadow-md">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">LIVE 🔥</span>
-                      <span className="font-mono text-xs text-rose-400 font-bold">⏱️ 04:32</span>
-                    </div>
-                    <h4 className="text-base font-bold text-white">Roatán Especial Oro</h4>
-                    <p className="text-xs text-slate-400 mb-3">Vendedor: arielcastellanos</p>
-                    
-                    <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-center mb-4">
-                      <span className="block text-[10px] text-slate-500 uppercase font-bold tracking-wider">Puja Más Alta</span>
-                      <span className="text-lg font-black text-yellow-400">150 🪙</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <input 
-                      type="number" 
-                      placeholder="+10" 
-                      className="w-20 bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white font-bold"
-                    />
-                    <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition">
-                      Pujar
-                    </button>
-                  </div>
+              {activeAuctions.length === 0 ? (
+                <div className="text-center py-12 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
+                  No hay subastas en vivo en este momento. ¡Lanza una para tus espectadores en TikTok!
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {activeAuctions.map((auction) => (
+                    <div key={auction.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between shadow-md">
+                      <div>
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">LIVE 🔥</span>
+                          <span className="font-mono text-xs text-rose-400 font-bold">ACTIVA</span>
+                        </div>
+                        <h4 className="text-base font-bold text-white">{auction.sticker_name}</h4>
+                        <p className="text-xs text-slate-400 mb-3">Vendedor: {auction.seller_name}</p>
+                        
+                        <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-center mb-4">
+                          <span className="block text-[10px] text-slate-500 uppercase font-bold tracking-wider">Puja Más Alta</span>
+                          <span className="text-lg font-black text-yellow-400">{auction.highest_bid} 🪙</span>
+                        </div>
+                      </div>
 
+                      <div className="flex gap-2">
+                        <input 
+                          type="number" 
+                          placeholder="+10" 
+                          className="w-20 bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white font-bold"
+                        />
+                        <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition">
+                          Pujar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
