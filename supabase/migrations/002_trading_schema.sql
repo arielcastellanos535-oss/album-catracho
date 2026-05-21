@@ -75,6 +75,7 @@ CREATE POLICY asset_reservations_own ON asset_reservations FOR ALL TO authentica
 CREATE POLICY coin_reservations_own ON coin_reservations FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
 
 -- RPC: intercambio atómico (aceptar oferta)
+DROP FUNCTION IF EXISTS public.execute_trade(UUID);
 CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql

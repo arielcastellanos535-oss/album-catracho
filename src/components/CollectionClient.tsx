@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 type Row = UserSticker & { sticker: Sticker & { department?: { slug: string } } };
 type Tab = "new" | "all" | "dupes";
 
-export function CollectionClient({ items }: { items: Row[] }) {
+export function CollectionClient({ items, pastedIds }: { items: Row[]; pastedIds: Set<string> }) {
   const [tab, setTab] = useState<Tab>("new");
   const router = useRouter();
   const supabase = createClient();
@@ -62,23 +62,31 @@ export function CollectionClient({ items }: { items: Row[] }) {
         <p className="text-muted">No hay cromos en esta vista. ¡Abre sobres!</p>
       ) : (
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {filtered.map((row) => (
-            <li key={row.id}>
-              <StickerCard
-                sticker={row.sticker}
-                owned={row.quantity}
-                seenAt={row.seen_at}
-                firstObtainedAt={row.first_obtained_at}
-                compact
-                onPaste={() => {
-                  const departmentSlug = row.sticker.department?.slug;
-                  if (departmentSlug) {
-                    pasteAndRedirect(row.sticker_id, departmentSlug);
+          {filtered.map((row) => {
+            const pasted = pastedIds.has(row.sticker_id);
+            return (
+              <li key={row.id}>
+                <StickerCard
+                  sticker={row.sticker}
+                  owned={row.quantity}
+                  pasted={pasted}
+                  seenAt={row.seen_at}
+                  firstObtainedAt={row.first_obtained_at}
+                  compact
+                  onPaste={
+                    !pasted
+                      ? () => {
+                          const departmentSlug = row.sticker.department?.slug;
+                          if (departmentSlug) {
+                            pasteAndRedirect(row.sticker_id, departmentSlug);
+                          }
+                        }
+                      : undefined
                   }
-                }}
-              />
-            </li>
-          ))}
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

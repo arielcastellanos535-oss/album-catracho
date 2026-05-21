@@ -1,6 +1,7 @@
 -- Migración: Actualiza funciones RPC de trading para limpiar reservas de cromos
 
 -- Reemplaza execute_trade para eliminar asset_reservations del vendedor
+DROP FUNCTION IF EXISTS public.execute_trade(UUID);
 CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql

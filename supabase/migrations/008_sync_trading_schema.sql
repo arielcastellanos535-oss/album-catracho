@@ -42,6 +42,7 @@ ALTER TABLE IF EXISTS public.asset_reservations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.coin_reservations ENABLE ROW LEVEL SECURITY;
 
 -- RPC actualizados
+DROP FUNCTION IF EXISTS public.execute_trade(UUID);
 CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql
