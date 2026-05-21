@@ -2,13 +2,13 @@
 
 -- Tablas: trade_offers, auctions, asset_reservations, coin_reservations
 CREATE TABLE IF NOT EXISTS trade_offers (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   sticker_id_offered UUID NOT NULL REFERENCES stickers(id) ON DELETE CASCADE,
   sticker_id_wanted UUID NOT NULL REFERENCES stickers(id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'pending', -- pending | accepted | cancelled
   target_user_id UUID NULL REFERENCES auth.users(id) ON DELETE SET NULL,
-  parent_offer_id UUID NULL REFERENCES trade_offers(id) ON DELETE SET NULL,
+  parent_offer_id TEXT NULL REFERENCES trade_offers(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS auctions (
   highest_bid INT NOT NULL DEFAULT 0,
   highest_bidder_id UUID NULL REFERENCES auth.users(id) ON DELETE SET NULL,
   status TEXT NOT NULL DEFAULT 'active', -- active | finished | cancelled
-  expires_at TIMESTAMPTZ NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -53,21 +53,29 @@ ALTER TABLE asset_reservations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE coin_reservations ENABLE ROW LEVEL SECURITY;
 
 -- Políticas: trade_offers
+DROP POLICY IF EXISTS trade_offers_select_public ON trade_offers;
+DROP POLICY IF EXISTS trade_offers_insert_own ON trade_offers;
+DROP POLICY IF EXISTS trade_offers_update_owner_or_target ON trade_offers;
 CREATE POLICY trade_offers_select_public ON trade_offers FOR SELECT TO authenticated USING (status = 'pending' AND target_user_id IS NULL);
 CREATE POLICY trade_offers_insert_own ON trade_offers FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid()::uuid);
 CREATE POLICY trade_offers_update_owner_or_target ON trade_offers FOR UPDATE TO authenticated USING (user_id = auth.uid()::uuid OR target_user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid OR target_user_id = auth.uid()::uuid);
 
 -- Políticas: auctions
-CREATE POLICY auctions_select ON auctions FOR SELECT TO authenticated USING (status = 'active');
+DROP POLICY IF EXISTS auctions_select ON auctions;
+DROP POLICY IF EXISTS auctions_insert_own ON auctions;
+DROP POLICY IF EXISTS auctions_update_seller ON auctions;
+CREATE POLICY auctions_select ON auctions FOR SELECT TO authenticated USING ((status = 'active'::text) AND (expires_at > now()));
 CREATE POLICY auctions_insert_own ON auctions FOR INSERT TO authenticated WITH CHECK (seller_id = auth.uid()::uuid);
 CREATE POLICY auctions_update_seller ON auctions FOR UPDATE TO authenticated USING (seller_id = auth.uid()::uuid) WITH CHECK (seller_id = auth.uid()::uuid);
 
 -- Políticas: reservations (solo dueño puede CRUD)
+DROP POLICY IF EXISTS asset_reservations_own ON asset_reservations;
+DROP POLICY IF EXISTS coin_reservations_own ON coin_reservations;
 CREATE POLICY asset_reservations_own ON asset_reservations FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
 CREATE POLICY coin_reservations_own ON coin_reservations FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
 
 -- RPC: intercambio atómico (aceptar oferta)
-CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id UUID)
+CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -160,7 +168,7 @@ EXCEPTION WHEN others THEN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.execute_trade(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.execute_trade(TEXT) TO authenticated;
 
 -- RPC: finalizar subasta (transferencia de cromo al ganador y cobro de monedas)
 CREATE OR REPLACE FUNCTION public.finalize_auction(p_auction_id UUID)

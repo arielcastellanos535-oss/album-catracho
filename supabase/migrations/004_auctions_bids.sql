@@ -1,4 +1,12 @@
--- Migración: Añade auction_id a coin_reservations y función place_bid
+-- Migración: Añade auction_id a coin_reservations, tabla auction_bids y función place_bid
+
+CREATE TABLE IF NOT EXISTS auction_bids (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  auction_id UUID NULL REFERENCES auctions(id) ON DELETE CASCADE,
+  bidder_id UUID NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+  amount INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
 ALTER TABLE coin_reservations ADD COLUMN IF NOT EXISTS auction_id UUID NULL REFERENCES auctions(id) ON DELETE CASCADE;
 

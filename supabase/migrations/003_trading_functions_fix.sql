@@ -1,7 +1,7 @@
 -- Migración: Actualiza funciones RPC de trading para limpiar reservas de cromos
 
 -- Reemplaza execute_trade para eliminar asset_reservations del vendedor
-CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id UUID)
+CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -97,7 +97,7 @@ EXCEPTION WHEN others THEN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.execute_trade(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.execute_trade(TEXT) TO authenticated;
 
 -- Reemplaza finalize_auction para limpiar reservas
 CREATE OR REPLACE FUNCTION public.finalize_auction(p_auction_id UUID)
