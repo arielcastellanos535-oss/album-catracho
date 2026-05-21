@@ -134,7 +134,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  uid UUID := auth.uid();
+  uid UUID := auth.uid()::uuid;
   today DATE := (timezone('America/Tegucigalpa', now()))::date;
   prof user_profiles%ROWTYPE;
   granted UUID[] := '{}';
@@ -205,7 +205,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  uid UUID := auth.uid();
+  uid UUID := auth.uid()::uuid;
 BEGIN
   IF uid IS NULL THEN RAISE EXCEPTION 'not_authenticated'; END IF;
   IF NOT EXISTS (
@@ -232,12 +232,12 @@ ALTER TABLE ads ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "departments_read" ON departments FOR SELECT TO authenticated, anon USING (true);
 CREATE POLICY "stickers_read" ON stickers FOR SELECT TO authenticated, anon USING (true);
 
-CREATE POLICY "profiles_read_own" ON user_profiles FOR SELECT TO authenticated USING (user_id = auth.uid());
-CREATE POLICY "profiles_update_own" ON user_profiles FOR UPDATE TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "profiles_read_own" ON user_profiles FOR SELECT TO authenticated USING (user_id = auth.uid()::uuid);
+CREATE POLICY "profiles_update_own" ON user_profiles FOR UPDATE TO authenticated USING (user_id = auth.uid()::uuid);
 
-CREATE POLICY "user_stickers_own" ON user_stickers FOR ALL TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-CREATE POLICY "album_slots_own" ON user_album_slots FOR ALL TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-CREATE POLICY "pack_opens_own" ON pack_opens FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "user_stickers_own" ON user_stickers FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
+CREATE POLICY "album_slots_own" ON user_album_slots FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
+CREATE POLICY "pack_opens_own" ON pack_opens FOR SELECT TO authenticated USING (user_id = auth.uid()::uuid);
 
 CREATE POLICY "ads_read_active" ON ads FOR SELECT TO authenticated, anon
   USING (

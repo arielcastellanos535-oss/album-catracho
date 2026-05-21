@@ -14,7 +14,7 @@ SET search_path = public
 AS $$
 DECLARE
   v_auction RECORD;
-  v_user UUID := auth.uid();
+  v_user UUID := auth.uid()::uuid;
   v_profile RECORD;
   v_prev_bidder UUID;
   v_prev_amount INT;

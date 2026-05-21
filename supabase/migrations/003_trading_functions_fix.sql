@@ -10,7 +10,7 @@ AS $$
 DECLARE
   v_trade RECORD;
   v_seller_id UUID;
-  v_buyer_id UUID := auth.uid();
+  v_buyer_id UUID := auth.uid()::uuid;
   v_offered UUID;
   v_wanted UUID;
   v_seller_row RECORD;

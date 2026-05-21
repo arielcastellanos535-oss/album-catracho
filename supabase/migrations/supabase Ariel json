@@ -1,0 +1,1262 @@
+[
+  {
+    "metadata": {
+      "tables": [
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "placement",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "'department_page'::text",
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "department_slug",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "image_url",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "link_url",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "valid_from",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "valid_to",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 7,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "boolean",
+              "column_name": "active",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "false",
+              "ordinal_position": 8,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 9,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "ads"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "sticker_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "quantity",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": "1",
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "expires_at",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "asset_reservations"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "auction_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "bidder_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "amount",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "auction_bids"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "seller_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "sticker_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "min_bet",
+              "is_nullable": "YES",
+              "numeric_scale": 0,
+              "column_default": "10",
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "highest_bid",
+              "is_nullable": "YES",
+              "numeric_scale": 0,
+              "column_default": "0",
+              "ordinal_position": 5,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "highest_bidder_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "status",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": "'active'::text",
+              "ordinal_position": 7,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "expires_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 8,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 9,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "updated_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 10,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "auctions"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "amount",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "expires_at",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "auction_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "coin_reservations"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "name",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "slug",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "page_order",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "slots_count",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": "5",
+              "ordinal_position": 5,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "boolean",
+              "column_name": "is_mvp_active",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "false",
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "fact_title",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 7,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 8,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "departments"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "USER-DEFINED",
+              "column_name": "pack_type",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "'normal'::pack_type",
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "ARRAY",
+              "column_name": "sticker_ids",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "opened_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "pack_opens"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "department_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "slot_index",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "number",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "name",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "fact_text",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "image_url",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 7,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "USER-DEFINED",
+              "column_name": "rarity",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "'common'::sticker_rarity",
+              "ordinal_position": 8,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "boolean",
+              "column_name": "is_mvp",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "true",
+              "ordinal_position": 9,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 10,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "stickers"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "text",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "sticker_id_offered",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "sticker_id_wanted",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 4,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "status",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": "'pending'::text",
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "target_user_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 7,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "parent_offer_id",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 8,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "updated_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 9,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "trade_offers"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "sticker_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "pasted_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 4,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "user_album_slots"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "display_name",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "text",
+              "column_name": "avatar_url",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "coins",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": "50",
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "packs_opened_today",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": "0",
+              "ordinal_position": 5,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "date",
+              "column_name": "last_pack_date",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "created_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 7,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "updated_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 8,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "user_profiles"
+        },
+        {
+          "schema": "public",
+          "columns": [
+            {
+              "data_type": "uuid",
+              "column_name": "id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "gen_random_uuid()",
+              "ordinal_position": 1,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "user_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 2,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "uuid",
+              "column_name": "sticker_id",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 3,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "integer",
+              "column_name": "quantity",
+              "is_nullable": "NO",
+              "numeric_scale": 0,
+              "column_default": "1",
+              "ordinal_position": 4,
+              "numeric_precision": 32,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "first_obtained_at",
+              "is_nullable": "NO",
+              "numeric_scale": null,
+              "column_default": "now()",
+              "ordinal_position": 5,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            },
+            {
+              "data_type": "timestamp with time zone",
+              "column_name": "seen_at",
+              "is_nullable": "YES",
+              "numeric_scale": null,
+              "column_default": null,
+              "ordinal_position": 6,
+              "numeric_precision": null,
+              "character_maximum_length": null
+            }
+          ],
+          "table_name": "user_stickers"
+        }
+      ],
+      "policies": [
+        {
+          "roles": "{16485,16484}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "ads",
+          "policy_name": "ads_read_active",
+          "check_expression": null,
+          "using_expression": "((active = true) AND ((valid_from IS NULL) OR (valid_from <= now())) AND ((valid_to IS NULL) OR (valid_to >= now())))"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "*",
+          "table_name": "asset_reservations",
+          "policy_name": "asset_reservations_own",
+          "check_expression": "(user_id = auth.uid())",
+          "using_expression": "(user_id = auth.uid())"
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "auction_bids",
+          "policy_name": "Cualquiera ve las pujas",
+          "check_expression": null,
+          "using_expression": "true"
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "a",
+          "table_name": "auction_bids",
+          "policy_name": "Usuarios pueden pujar",
+          "check_expression": "(auth.uid() = bidder_id)",
+          "using_expression": null
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "auctions",
+          "policy_name": "Cualquiera puede ver subastas activas",
+          "check_expression": null,
+          "using_expression": "((status = 'active'::text) AND (expires_at > now()))"
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "*",
+          "table_name": "auctions",
+          "policy_name": "Vendedor puede manejar sus subastas",
+          "check_expression": "(auth.uid() = seller_id)",
+          "using_expression": "(auth.uid() = seller_id)"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "a",
+          "table_name": "auctions",
+          "policy_name": "auctions_insert_own",
+          "check_expression": "(seller_id = auth.uid())",
+          "using_expression": null
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "auctions",
+          "policy_name": "auctions_select",
+          "check_expression": null,
+          "using_expression": "(status = 'active'::text)"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "w",
+          "table_name": "auctions",
+          "policy_name": "auctions_update_seller",
+          "check_expression": "(seller_id = auth.uid())",
+          "using_expression": "(seller_id = auth.uid())"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "*",
+          "table_name": "coin_reservations",
+          "policy_name": "coin_reservations_own",
+          "check_expression": "(user_id = auth.uid())",
+          "using_expression": "(user_id = auth.uid())"
+        },
+        {
+          "roles": "{16485,16484}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "departments",
+          "policy_name": "departments_read",
+          "check_expression": null,
+          "using_expression": "true"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "pack_opens",
+          "policy_name": "pack_opens_own",
+          "check_expression": null,
+          "using_expression": "(user_id = auth.uid())"
+        },
+        {
+          "roles": "{16485,16484}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "stickers",
+          "policy_name": "stickers_read",
+          "check_expression": null,
+          "using_expression": "true"
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "trade_offers",
+          "policy_name": "Cualquiera puede ver ofertas pendientes",
+          "check_expression": null,
+          "using_expression": "(status = 'pending'::text)"
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "*",
+          "table_name": "trade_offers",
+          "policy_name": "Usuarios pueden manejar sus propias ofertas",
+          "check_expression": "(auth.uid() = user_id)",
+          "using_expression": "(auth.uid() = user_id)"
+        },
+        {
+          "roles": "{0}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "trade_offers",
+          "policy_name": "Usuarios pueden ver ofertas dirigidas a ellos",
+          "check_expression": null,
+          "using_expression": "(auth.uid() = target_user_id)"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "a",
+          "table_name": "trade_offers",
+          "policy_name": "trade_offers_insert_own",
+          "check_expression": "(user_id = auth.uid())",
+          "using_expression": null
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "trade_offers",
+          "policy_name": "trade_offers_select_public",
+          "check_expression": null,
+          "using_expression": "((status = 'pending'::text) AND (target_user_id IS NULL))"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "w",
+          "table_name": "trade_offers",
+          "policy_name": "trade_offers_update_owner_or_target",
+          "check_expression": "((user_id = auth.uid()) OR (target_user_id = auth.uid()))",
+          "using_expression": "((user_id = auth.uid()) OR (target_user_id = auth.uid()))"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "*",
+          "table_name": "user_album_slots",
+          "policy_name": "album_slots_own",
+          "check_expression": "(user_id = auth.uid())",
+          "using_expression": "(user_id = auth.uid())"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "r",
+          "table_name": "user_profiles",
+          "policy_name": "profiles_read_own",
+          "check_expression": null,
+          "using_expression": "(user_id = auth.uid())"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "w",
+          "table_name": "user_profiles",
+          "policy_name": "profiles_update_own",
+          "check_expression": null,
+          "using_expression": "(user_id = auth.uid())"
+        },
+        {
+          "roles": "{16485}",
+          "schema": "public",
+          "command": "*",
+          "table_name": "user_stickers",
+          "policy_name": "user_stickers_own",
+          "check_expression": "(user_id = auth.uid())",
+          "using_expression": "(user_id = auth.uid())"
+        }
+      ],
+      "triggers": [],
+      "functions": [
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.accept_trade_offer(offer_code text, accepting_user_id uuid)\n RETURNS json\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nDECLARE\n    v_offer RECORD;\n    v_has_wanted_sticker BOOLEAN;\nBEGIN\n    -- 1) Bloquear y buscar la oferta pendiente\n    SELECT * INTO v_offer\n    FROM public.trade_offers\n    WHERE id = offer_code AND status = 'pending'\n    FOR UPDATE;\n\n    IF NOT FOUND THEN\n        RETURN json_build_object('success', false, 'message', 'El código de intercambio no existe o ya expiró.');\n    END IF;\n\n    -- No puedes intercambiar contigo mismo\n    IF v_offer.user_id = accepting_user_id THEN\n        RETURN json_build_object('success', false, 'message', 'No puedes aceptar tu propio intercambio.');\n    END IF;\n\n    -- 2) Verificar que el aceptante tiene el sticker que el ofertante busca\n    SELECT EXISTS (\n        SELECT 1\n        FROM public.user_stickers\n        WHERE user_id = accepting_user_id\n          AND sticker_id = v_offer.sticker_id_wanted\n          AND quantity > 0\n    ) INTO v_has_wanted_sticker;\n\n    IF NOT v_has_wanted_sticker THEN\n        RETURN json_build_object('success', false, 'message', 'No tienes el cromo que este jugador está buscando.');\n    END IF;\n\n    -- 3) Ajustar cantidades (ofertante recibe el wanted; entrega el offered)\n\n    -- Al ofertante: +1 del que quería\n    INSERT INTO public.user_stickers (user_id, sticker_id, quantity)\n    VALUES (v_offer.user_id, v_offer.sticker_id_wanted, 1)\n    ON CONFLICT (user_id, sticker_id)\n    DO UPDATE SET quantity = public.user_stickers.quantity + 1;\n\n    -- Al aceptante: -1 del que entrega (el wanted)\n    UPDATE public.user_stickers\n    SET quantity = quantity - 1\n    WHERE user_id = accepting_user_id\n      AND sticker_id = v_offer.sticker_id_wanted\n      AND quantity > 0;\n\n    -- Al aceptante: +1 del que recibe (el offered)\n    INSERT INTO public.user_stickers (user_id, sticker_id, quantity)\n    VALUES (accepting_user_id, v_offer.sticker_id_offered, 1)\n    ON CONFLICT (user_id, sticker_id)\n    DO UPDATE SET quantity = public.user_stickers.quantity + 1;\n\n    -- 4) Marcar oferta como completada\n    UPDATE public.trade_offers\n    SET status = 'completed'\n    WHERE id = offer_code\n      AND status = 'pending';\n\n    RETURN json_build_object('success', true, 'message', '¡Intercambio realizado con éxito!');\nEND;\n$function$\n",
+          "volatility": "v",
+          "return_type": "json",
+          "function_name": "accept_trade_offer",
+          "argument_types": "offer_code text, accepting_user_id uuid",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.close_expired_auction(p_auction_id uuid)\n RETURNS json\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nDECLARE\n    v_auction RECORD;\n    v_seller_has_sticker BOOLEAN;\nBEGIN\n    -- 1) Bloquear y obtener la subasta para procesar el cierre\n    SELECT *\n      INTO v_auction\n      FROM public.auctions\n     WHERE id = p_auction_id\n       AND status = 'active'\n       AND expires_at <= NOW()\n     FOR UPDATE;\n\n    IF NOT FOUND THEN\n        RETURN json_build_object('success', false, 'message', 'La subasta no existe, ya fue cerrada o aún no ha expirado.');\n    END IF;\n\n    -- CASE A: Nadie pujó\n    IF v_auction.highest_bidder_id IS NULL THEN\n        UPDATE public.auctions\n           SET status = 'no_bids'\n         WHERE id = p_auction_id;\n\n        RETURN json_build_object('success', true, 'message', 'Subasta cerrada sin ofertas. El cromo sigue siendo del dueño.');\n    END IF;\n\n    -- CASE B: Tenemos ganador\n\n    -- 1) Verificar que el vendedor todavía tenga el cromo disponible\n    SELECT EXISTS (\n        SELECT 1\n          FROM public.user_stickers\n         WHERE user_id = v_auction.seller_id\n           AND sticker_id = v_auction.sticker_id\n           AND quantity > 0\n    ) INTO v_seller_has_sticker;\n\n    IF NOT v_seller_has_sticker THEN\n        -- Devolver monedas al ganador (no había devolución previa en close)\n        UPDATE public.user_profiles\n           SET coins = coins + v_auction.highest_bid\n         WHERE user_id = v_auction.highest_bidder_id;\n\n        UPDATE public.auctions\n           SET status = 'cancelled'\n         WHERE id = p_auction_id;\n\n        RETURN json_build_object('success', false, 'message', 'Error: El vendedor ya no posee el cromo. Subasta cancelada y monedas devueltas.');\n    END IF;\n\n    -- 2) Transferir el cromo\n    UPDATE public.user_stickers\n       SET quantity = quantity - 1\n     WHERE user_id = v_auction.seller_id\n       AND sticker_id = v_auction.sticker_id\n       AND quantity > 0;\n\n    INSERT INTO public.user_stickers (user_id, sticker_id, quantity)\n    VALUES (v_auction.highest_bidder_id, v_auction.sticker_id, 1)\n    ON CONFLICT (user_id, sticker_id)\n    DO UPDATE SET quantity = user_stickers.quantity + 1;\n\n    -- 3) Transferir monedas al vendedor\n    UPDATE public.user_profiles\n       SET coins = coins + v_auction.highest_bid\n     WHERE user_id = v_auction.seller_id;\n\n    -- 4) Marcar la subasta como finalizada\n    UPDATE public.auctions\n       SET status = 'finished'\n     WHERE id = p_auction_id;\n\n    RETURN json_build_object('success', true, 'message', '¡Subasta finalizada con éxito! Cromo y monedas transferidos.');\nEND;\n$function$\n",
+          "volatility": "v",
+          "return_type": "json",
+          "function_name": "close_expired_auction",
+          "argument_types": "p_auction_id uuid",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nDECLARE\r\n  v_trade RECORD;\r\n  v_seller_id UUID;\r\n  v_buyer_id UUID := auth.uid();\r\n  v_offered UUID;\r\n  v_wanted UUID;\r\n  v_seller_row RECORD;\r\n  v_buyer_row RECORD;\r\nBEGIN\r\n  IF v_buyer_id IS NULL THEN\r\n    RAISE EXCEPTION 'not_authenticated';\r\n  END IF;\r\n\r\n  SELECT * INTO v_trade FROM trade_offers WHERE id = p_trade_id FOR UPDATE;\r\n  IF NOT FOUND THEN\r\n    RAISE EXCEPTION 'trade_not_found';\r\n  END IF;\r\n\r\n  IF v_trade.status <> 'pending' THEN\r\n    RAISE EXCEPTION 'trade_not_pending';\r\n  END IF;\r\n\r\n  v_seller_id := v_trade.user_id;\r\n  IF v_seller_id = v_buyer_id THEN\r\n    RAISE EXCEPTION 'cannot_accept_own_trade';\r\n  END IF;\r\n\r\n  v_offered := v_trade.sticker_id_offered;\r\n  v_wanted := v_trade.sticker_id_wanted;\r\n\r\n  -- Bloquear filas de user_stickers relevantes\r\n  SELECT * INTO v_seller_row FROM user_stickers WHERE user_id = v_seller_id AND sticker_id = v_offered FOR UPDATE;\r\n  IF NOT FOUND OR v_seller_row.quantity <= 0 THEN\r\n    RAISE EXCEPTION 'seller_no_longer_has';\r\n  END IF;\r\n\r\n  SELECT * INTO v_buyer_row FROM user_stickers WHERE user_id = v_buyer_id AND sticker_id = v_wanted FOR UPDATE;\r\n  IF NOT FOUND OR v_buyer_row.quantity <= 0 THEN\r\n    RAISE EXCEPTION 'buyer_lacks_wanted';\r\n  END IF;\r\n\r\n  -- Validaciones de \"pegado\": si qty = 1, no debe estar pegado\r\n  IF v_seller_row.quantity = 1 THEN\r\n    IF EXISTS (SELECT 1 FROM user_album_slots WHERE user_id = v_seller_id AND sticker_id = v_offered) THEN\r\n      RAISE EXCEPTION 'seller_offered_pasted';\r\n    END IF;\r\n  END IF;\r\n\r\n  IF v_buyer_row.quantity = 1 THEN\r\n    IF EXISTS (SELECT 1 FROM user_album_slots WHERE user_id = v_buyer_id AND sticker_id = v_wanted) THEN\r\n      RAISE EXCEPTION 'buyer_wanted_pasted';\r\n    END IF;\r\n  END IF;\r\n\r\n  -- Ejecutar transferencias: decrementar y upsert\r\n  IF v_seller_row.quantity > 1 THEN\r\n    UPDATE user_stickers SET quantity = v_seller_row.quantity - 1 WHERE id = v_seller_row.id;\r\n  ELSE\r\n    DELETE FROM user_stickers WHERE id = v_seller_row.id;\r\n  END IF;\r\n\r\n  -- Dar al comprador el cromo ofrecido\r\n  INSERT INTO user_stickers (user_id, sticker_id, quantity, first_obtained_at)\r\n  VALUES (v_buyer_id, v_offered, 1, now())\r\n  ON CONFLICT (user_id, sticker_id) DO UPDATE SET quantity = user_stickers.quantity + 1;\r\n\r\n  -- Decrementar el cromo del comprador (wanted)\r\n  IF v_buyer_row.quantity > 1 THEN\r\n    UPDATE user_stickers SET quantity = v_buyer_row.quantity - 1 WHERE id = v_buyer_row.id;\r\n  ELSE\r\n    DELETE FROM user_stickers WHERE id = v_buyer_row.id;\r\n  END IF;\r\n\r\n  -- Dar al vendedor el cromo wanted\r\n  INSERT INTO user_stickers (user_id, sticker_id, quantity, first_obtained_at)\r\n  VALUES (v_seller_id, v_wanted, 1, now())\r\n  ON CONFLICT (user_id, sticker_id) DO UPDATE SET quantity = user_stickers.quantity + 1;\r\n\r\n  -- Eliminar reserva del vendedor si existe\r\n  DELETE FROM asset_reservations WHERE user_id = v_seller_id AND sticker_id = v_offered;\r\n\r\n  -- Marcar trade como accepted\r\n  UPDATE trade_offers SET status = 'accepted', target_user_id = v_buyer_id, updated_at = now() WHERE id = p_trade_id;\r\n\r\n  RETURN jsonb_build_object('status','ok');\r\nEXCEPTION WHEN others THEN\r\n  RAISE;\r\nEND;\r\n$function$\n",
+          "volatility": "v",
+          "return_type": "jsonb",
+          "function_name": "execute_trade",
+          "argument_types": "p_trade_id uuid",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.finalize_auction(p_auction_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nDECLARE\r\n  v_auction RECORD;\r\n  v_seller_id UUID;\r\n  v_winner_id UUID;\r\n  v_sticker UUID;\r\n  v_winner_profile RECORD;\r\n  v_seller_profile RECORD;\r\nBEGIN\r\n  SELECT * INTO v_auction FROM auctions WHERE id = p_auction_id FOR UPDATE;\r\n  IF NOT FOUND THEN\r\n    RAISE EXCEPTION 'auction_not_found';\r\n  END IF;\r\n  IF v_auction.status <> 'active' THEN\r\n    RAISE EXCEPTION 'auction_not_active';\r\n  END IF;\r\n  IF v_auction.expires_at > now() THEN\r\n    RAISE EXCEPTION 'auction_not_expired';\r\n  END IF;\r\n\r\n  v_seller_id := v_auction.seller_id;\r\n  v_winner_id := v_auction.highest_bidder_id;\r\n  v_sticker := v_auction.sticker_id;\r\n\r\n  IF v_winner_id IS NULL THEN\r\n    DELETE FROM asset_reservations WHERE user_id = v_seller_id AND sticker_id = v_sticker;\r\n    UPDATE auctions SET status = 'finished', updated_at = now() WHERE id = p_auction_id;\r\n    RETURN jsonb_build_object('status', 'no_bids');\r\n  END IF;\r\n\r\n  -- Bloquear perfiles y filas relevantes\r\n  SELECT * INTO v_winner_profile FROM user_profiles WHERE user_id = v_winner_id FOR UPDATE;\r\n  SELECT * INTO v_seller_profile FROM user_profiles WHERE user_id = v_seller_id FOR UPDATE;\r\n\r\n  IF v_winner_profile.coins < v_auction.highest_bid THEN\r\n    RAISE EXCEPTION 'winner_insufficient_coins';\r\n  END IF;\r\n\r\n  -- Eliminar reserva de monedas del ganador para esta subasta\r\n  DELETE FROM coin_reservations WHERE user_id = v_winner_id AND auction_id = p_auction_id;\r\n\r\n  -- Transferir monedas\r\n  UPDATE user_profiles SET coins = v_winner_profile.coins - v_auction.highest_bid WHERE user_id = v_winner_id;\r\n  UPDATE user_profiles SET coins = v_seller_profile.coins + v_auction.highest_bid WHERE user_id = v_seller_id;\r\n\r\n  -- Transferir cromo: decrementar del vendedor, incrementar del ganador\r\n  IF EXISTS (SELECT 1 FROM user_stickers WHERE user_id = v_seller_id AND sticker_id = v_sticker) THEN\r\n    UPDATE user_stickers SET quantity = user_stickers.quantity - 1\r\n      WHERE user_id = v_seller_id AND sticker_id = v_sticker AND user_stickers.quantity > 1;\r\n    DELETE FROM user_stickers WHERE user_id = v_seller_id AND sticker_id = v_sticker AND user_stickers.quantity = 1;\r\n  ELSE\r\n    RAISE EXCEPTION 'seller_no_longer_has_sticker';\r\n  END IF;\r\n\r\n  INSERT INTO user_stickers (user_id, sticker_id, quantity, first_obtained_at)\r\n  VALUES (v_winner_id, v_sticker, 1, now())\r\n  ON CONFLICT (user_id, sticker_id) DO UPDATE SET quantity = user_stickers.quantity + 1;\r\n\r\n  -- Eliminar reserva del vendedor\r\n  DELETE FROM asset_reservations WHERE user_id = v_seller_id AND sticker_id = v_sticker;\r\n\r\n  UPDATE auctions SET status = 'finished', updated_at = now() WHERE id = p_auction_id;\r\n\r\n  RETURN jsonb_build_object('status','ok');\r\nEND;\r\n$function$\n",
+          "volatility": "v",
+          "return_type": "jsonb",
+          "function_name": "finalize_auction",
+          "argument_types": "p_auction_id uuid",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.finalize_expired_auctions()\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nDECLARE\r\n  v_auction RECORD;\r\n  v_count INT := 0;\r\nBEGIN\r\n  FOR v_auction IN\r\n    SELECT id FROM auctions\r\n    WHERE status = 'active' AND expires_at <= now()\r\n    FOR UPDATE SKIP LOCKED\r\n  LOOP\r\n    BEGIN\r\n      PERFORM public.finalize_auction(v_auction.id);\r\n      v_count := v_count + 1;\r\n    EXCEPTION WHEN OTHERS THEN\r\n      -- Ignorar subastas problemáticas para permitir continuar con las demás\r\n      RAISE NOTICE 'finalize_expired_auctions failed for auction %, error: %', v_auction.id, SQLERRM;\r\n    END;\r\n  END LOOP;\r\n\r\n  RETURN jsonb_build_object('finalized_count', v_count);\r\nEND;\r\n$function$\n",
+          "volatility": "v",
+          "return_type": "jsonb",
+          "function_name": "finalize_expired_auctions",
+          "argument_types": "",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.handle_new_user()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nBEGIN\n  INSERT INTO public.user_profiles (user_id, display_name, avatar_url)\n  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', 'Catracho'), NEW.raw_user_meta_data->>'avatar_url');\n  RETURN NEW;\nEND; $function$\n",
+          "volatility": "v",
+          "return_type": "trigger",
+          "function_name": "handle_new_user",
+          "argument_types": "",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.open_normal_pack()\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nDECLARE uid UUID := auth.uid(); today DATE := (timezone('America/Tegucigalpa', now()))::date; prof user_profiles%ROWTYPE; granted UUID[] := '{}'; sid UUID; pool UUID[];\nBEGIN\n  IF uid IS NULL THEN RAISE EXCEPTION 'not_authenticated'; END IF;\n  SELECT * INTO prof FROM user_profiles WHERE user_id = uid FOR UPDATE;\n  IF NOT FOUND THEN INSERT INTO user_profiles (user_id) VALUES (uid); SELECT * INTO prof FROM user_profiles WHERE user_id = uid FOR UPDATE; END IF;\n  IF prof.last_pack_date IS DISTINCT FROM today THEN UPDATE user_profiles SET last_pack_date = today, packs_opened_today = 0, updated_at = now() WHERE user_id = uid; prof.packs_opened_today := 0; prof.last_pack_date := today; END IF;\n  IF prof.packs_opened_today >= 2 THEN RAISE EXCEPTION 'daily_limit_reached'; END IF;\n  SELECT array_agg(id) INTO pool FROM (SELECT id FROM stickers WHERE is_mvp = true AND rarity = 'common' ORDER BY random() LIMIT 2) picked;\n  IF pool IS NULL OR array_length(pool, 1) < 2 THEN RAISE EXCEPTION 'no_stickers_configured'; END IF;\n  FOREACH sid IN ARRAY pool LOOP granted := array_append(granted, sid); INSERT INTO user_stickers (user_id, sticker_id, quantity) VALUES (uid, sid, 1) ON CONFLICT (user_id, sticker_id) DO UPDATE SET quantity = user_stickers.quantity + 1; END LOOP;\n  UPDATE user_profiles SET packs_opened_today = prof.packs_opened_today + 1, updated_at = now() WHERE user_id = uid;\n  INSERT INTO pack_opens (user_id, pack_type, sticker_ids) VALUES (uid, 'normal', granted);\n  RETURN jsonb_build_object('sticker_ids', to_jsonb(granted), 'packs_remaining_today', 2 - (prof.packs_opened_today + 1));\nEND; $function$\n",
+          "volatility": "v",
+          "return_type": "jsonb",
+          "function_name": "open_normal_pack",
+          "argument_types": "",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.paste_sticker(p_sticker_id uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nDECLARE uid UUID := auth.uid();\nBEGIN\n  IF uid IS NULL THEN RAISE EXCEPTION 'not_authenticated'; END IF;\n  IF NOT EXISTS (SELECT 1 FROM user_stickers WHERE user_id = uid AND sticker_id = p_sticker_id AND quantity > 0) THEN RAISE EXCEPTION 'sticker_not_owned'; END IF;\n  INSERT INTO user_album_slots (user_id, sticker_id) VALUES (uid, p_sticker_id) ON CONFLICT (user_id, sticker_id) DO NOTHING;\nEND; $function$\n",
+          "volatility": "v",
+          "return_type": "void",
+          "function_name": "paste_sticker",
+          "argument_types": "p_sticker_id uuid",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.place_auction_bid(p_auction_id uuid, p_bidder_id uuid, p_amount integer)\n RETURNS json\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nDECLARE\n    v_auction RECORD;\n    v_current_balance INT;\nBEGIN\n    SELECT * INTO v_auction FROM public.auctions \n    WHERE id = p_auction_id AND status = 'active' AND expires_at > NOW()\n    FOR UPDATE;\n    \n    IF NOT FOUND THEN\n        RETURN json_build_object('success', false, 'message', 'La subasta ya no está activa o expiró.');\n    END IF;\n\n    IF v_auction.seller_id = p_bidder_id THEN\n        RETURN json_build_object('success', false, 'message', 'No puedes pujar en tu propia subasta.');\n    END IF;\n\n    IF p_amount <= v_auction.highest_bid OR p_amount < v_auction.min_bet THEN\n        RETURN json_build_object('success', false, 'message', 'La puja debe ser mayor a la puja actual y al monto mínimo.');\n    END IF;\n\n    SELECT coins INTO v_current_balance FROM public.user_profiles WHERE user_id = p_bidder_id;\n    IF v_current_balance < p_amount THEN\n        RETURN json_build_object('success', false, 'message', 'No tienes suficientes monedas para esta puja.');\n    END IF;\n\n    IF v_auction.highest_bidder_id IS NOT NULL THEN\n        UPDATE public.user_profiles \n        SET coins = coins + v_auction.highest_bid \n        WHERE user_id = v_auction.highest_bidder_id;\n    END IF;\n\n    UPDATE public.user_profiles \n    SET coins = coins - p_amount \n    WHERE user_id = p_bidder_id;\n\n    INSERT INTO public.auction_bids (auction_id, bidder_id, amount)\n    VALUES (p_auction_id, p_bidder_id, p_amount);\n\n    UPDATE public.auctions \n    SET highest_bid = p_amount,\n        highest_bidder_id = p_bidder_id\n    WHERE id = p_auction_id;\n\n    RETURN json_build_object('success', true, 'message', '¡Puja colocada con éxito!');\nEND;\n$function$\n",
+          "volatility": "v",
+          "return_type": "json",
+          "function_name": "place_auction_bid",
+          "argument_types": "p_auction_id uuid, p_bidder_id uuid, p_amount integer",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.place_bid(p_auction_id uuid, p_bid integer)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nDECLARE\r\n  v_auction RECORD;\r\n  v_user UUID := auth.uid();\r\n  v_profile RECORD;\r\n  v_prev_bidder UUID;\r\n  v_prev_amount INT;\r\n  v_reserved_sum INT;\r\nBEGIN\r\n  IF v_user IS NULL THEN\r\n    RAISE EXCEPTION 'not_authenticated';\r\n  END IF;\r\n\r\n  SELECT * INTO v_auction FROM auctions WHERE id = p_auction_id FOR UPDATE;\r\n  IF NOT FOUND THEN\r\n    RAISE EXCEPTION 'auction_not_found';\r\n  END IF;\r\n  IF v_auction.status <> 'active' THEN\r\n    RAISE EXCEPTION 'auction_not_active';\r\n  END IF;\r\n  IF v_auction.expires_at IS NOT NULL AND v_auction.expires_at <= now() THEN\r\n    RAISE EXCEPTION 'auction_expired';\r\n  END IF;\r\n  IF p_bid <= v_auction.highest_bid THEN\r\n    RAISE EXCEPTION 'bid_too_low';\r\n  END IF;\r\n\r\n  -- Bloquear perfil y calcular monedas disponibles (incluyendo reservas)\r\n  SELECT * INTO v_profile FROM user_profiles WHERE user_id = v_user FOR UPDATE;\r\n  IF NOT FOUND THEN\r\n    RAISE EXCEPTION 'profile_not_found';\r\n  END IF;\r\n\r\n  SELECT COALESCE(SUM(amount),0) INTO v_reserved_sum FROM coin_reservations WHERE user_id = v_user AND auction_id IS DISTINCT FROM p_auction_id;\r\n\r\n  IF v_profile.coins - v_reserved_sum < p_bid THEN\r\n    RAISE EXCEPTION 'insufficient_coins_after_reservations';\r\n  END IF;\r\n\r\n  -- Registrar reserva del ofertante actual (si ya existe, actualizar)\r\n  INSERT INTO coin_reservations (user_id, amount, auction_id, created_at)\r\n  VALUES (v_user, p_bid, p_auction_id, now())\r\n  ON CONFLICT (user_id, auction_id) DO UPDATE SET amount = EXCLUDED.amount, created_at = now();\r\n\r\n  -- Liberar reserva previa del mejor postor anterior (si no es el mismo usuario)\r\n  v_prev_bidder := v_auction.highest_bidder_id;\r\n  v_prev_amount := v_auction.highest_bid;\r\n\r\n  IF v_prev_bidder IS NOT NULL AND v_prev_bidder <> v_user THEN\r\n    DELETE FROM coin_reservations WHERE user_id = v_prev_bidder AND auction_id = p_auction_id;\r\n  END IF;\r\n\r\n  -- Actualizar subasta con nuevo mejor postor\r\n  UPDATE auctions SET highest_bid = p_bid, highest_bidder_id = v_user, updated_at = now() WHERE id = p_auction_id;\r\n\r\n  RETURN jsonb_build_object('status','ok');\r\nEND;\r\n$function$\n",
+          "volatility": "v",
+          "return_type": "jsonb",
+          "function_name": "place_bid",
+          "argument_types": "p_auction_id uuid, p_bid integer",
+          "security_definer": true
+        },
+        {
+          "schema": "public",
+          "language": "plpgsql",
+          "definition": "CREATE OR REPLACE FUNCTION public.rls_auto_enable()\n RETURNS event_trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog'\nAS $function$\nDECLARE\n  cmd record;\nBEGIN\n  FOR cmd IN\n    SELECT *\n    FROM pg_event_trigger_ddl_commands()\n    WHERE command_tag IN ('CREATE TABLE', 'CREATE TABLE AS', 'SELECT INTO')\n      AND object_type IN ('table','partitioned table')\n  LOOP\n     IF cmd.schema_name IS NOT NULL AND cmd.schema_name IN ('public') AND cmd.schema_name NOT IN ('pg_catalog','information_schema') AND cmd.schema_name NOT LIKE 'pg_toast%' AND cmd.schema_name NOT LIKE 'pg_temp%' THEN\n      BEGIN\n        EXECUTE format('alter table if exists %s enable row level security', cmd.object_identity);\n        RAISE LOG 'rls_auto_enable: enabled RLS on %', cmd.object_identity;\n      EXCEPTION\n        WHEN OTHERS THEN\n          RAISE LOG 'rls_auto_enable: failed to enable RLS on %', cmd.object_identity;\n      END;\n     ELSE\n        RAISE LOG 'rls_auto_enable: skip % (either system schema or not in enforced list: %.)', cmd.object_identity, cmd.schema_name;\n     END IF;\n  END LOOP;\nEND;\n$function$\n",
+          "volatility": "v",
+          "return_type": "event_trigger",
+          "function_name": "rls_auto_enable",
+          "argument_types": "",
+          "security_definer": true
+        }
+      ]
+    }
+  }
+]

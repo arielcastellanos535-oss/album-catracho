@@ -54,17 +54,17 @@ ALTER TABLE coin_reservations ENABLE ROW LEVEL SECURITY;
 
 -- Políticas: trade_offers
 CREATE POLICY trade_offers_select_public ON trade_offers FOR SELECT TO authenticated USING (status = 'pending' AND target_user_id IS NULL);
-CREATE POLICY trade_offers_insert_own ON trade_offers FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
-CREATE POLICY trade_offers_update_owner_or_target ON trade_offers FOR UPDATE TO authenticated USING (user_id = auth.uid() OR target_user_id = auth.uid()) WITH CHECK (user_id = auth.uid() OR target_user_id = auth.uid());
+CREATE POLICY trade_offers_insert_own ON trade_offers FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid()::uuid);
+CREATE POLICY trade_offers_update_owner_or_target ON trade_offers FOR UPDATE TO authenticated USING (user_id = auth.uid()::uuid OR target_user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid OR target_user_id = auth.uid()::uuid);
 
 -- Políticas: auctions
 CREATE POLICY auctions_select ON auctions FOR SELECT TO authenticated USING (status = 'active');
-CREATE POLICY auctions_insert_own ON auctions FOR INSERT TO authenticated WITH CHECK (seller_id = auth.uid());
-CREATE POLICY auctions_update_seller ON auctions FOR UPDATE TO authenticated USING (seller_id = auth.uid()) WITH CHECK (seller_id = auth.uid());
+CREATE POLICY auctions_insert_own ON auctions FOR INSERT TO authenticated WITH CHECK (seller_id = auth.uid()::uuid);
+CREATE POLICY auctions_update_seller ON auctions FOR UPDATE TO authenticated USING (seller_id = auth.uid()::uuid) WITH CHECK (seller_id = auth.uid()::uuid);
 
 -- Políticas: reservations (solo dueño puede CRUD)
-CREATE POLICY asset_reservations_own ON asset_reservations FOR ALL TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-CREATE POLICY coin_reservations_own ON coin_reservations FOR ALL TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+CREATE POLICY asset_reservations_own ON asset_reservations FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
+CREATE POLICY coin_reservations_own ON coin_reservations FOR ALL TO authenticated USING (user_id = auth.uid()::uuid) WITH CHECK (user_id = auth.uid()::uuid);
 
 -- RPC: intercambio atómico (aceptar oferta)
 CREATE OR REPLACE FUNCTION public.execute_trade(p_trade_id UUID)
@@ -76,7 +76,7 @@ AS $$
 DECLARE
   v_trade RECORD;
   v_seller_id UUID;
-  v_buyer_id UUID := auth.uid();
+  v_buyer_id UUID := auth.uid()::uuid;
   v_offered UUID;
   v_wanted UUID;
   v_seller_row RECORD;
