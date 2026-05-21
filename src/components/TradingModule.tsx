@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { createClient } from "@/lib/supabase/client";
 
 interface Department {
   id: string;
@@ -41,7 +40,7 @@ export default function TradingModule({
   activeAuctions: Auction[];
   activeTrades: TradeOffer[];
 }) {
-  const supabase = createClient();
+  // Usaremos los endpoints server-side que crean/validan reservas y transferencias
   const [activeTab, setActiveTab] = useState<'public' | 'direct' | 'auction'>('public');
 
   // Estados del Mercado Público
@@ -61,6 +60,9 @@ export default function TradingModule({
   const [minBet, setMinBet] = useState<number>(10);
   const [durationMinutes, setDurationMinutes] = useState<number>(5);
   const [isSubmittingAuction, setIsSubmittingAuction] = useState(false);
+  const [bids, setBids] = useState<Record<string, number>>({});
+  const [submittingBidFor, setSubmittingBidFor] = useState<string | null>(null);
+  const [isFinalizingExpired, setIsFinalizingExpired] = useState(false);
 
   // Sincronizar listas desde el servidor
   useEffect(() => { setTradesList(activeTrades); }, [activeTrades]);
@@ -86,37 +88,26 @@ export default function TradingModule({
     
     setIsSubmitting(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const newOfferId = crypto.randomUUID(); 
-
-      const { error } = await supabase
-        .from("trade_offers")
-        .insert([
-          { 
-            id: newOfferId,
-            user_id: user?.id || null,
-            sticker_id_offered: offeredSticker, 
-            sticker_id_wanted: wantedSticker,
-            status: "pending",
-            target_user_id: null,
-            parent_offer_id: null
-          }
-        ]);
-
-      if (error) throw error;
+      const res = await fetch('/api/trading/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ offeredStickerId: offeredSticker, wantedStickerId: wantedSticker }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'publish_failed');
 
       const offStickerObj = allStickers.find(s => s.id === offeredSticker);
       const wanStickerObj = allStickers.find(s => s.id === wantedSticker);
 
       const newOffer: TradeOffer = {
-        id: newOfferId,
+        id: data.id,
         offered_name: offStickerObj?.name || "Cromo",
         wanted_name: wanStickerObj?.name || "Cromo"
       };
 
       setTradesList([newOffer, ...tradesList]);
       alert("¡Oferta publicada con éxito en el Mercado Global! 🎉");
-      
+
       setOfferedSticker('');
       setWantedSticker('');
       setSelectedDept('');
@@ -132,17 +123,15 @@ export default function TradingModule({
   // ✅ ACEPTAR UN TRATO DE LA COMUNIDAD
   const handleAcceptTrade = async (tradeId: string) => {
     if (!confirm("¿Estás seguro de que deseas aceptar este intercambio?")) return;
-
     try {
-      // Actualizamos el estado en la base de datos a 'completed' o 'accepted'
-      const { error } = await supabase
-        .from("trade_offers")
-        .update({ status: "accepted" })
-        .eq("id", tradeId);
+      const res = await fetch('/api/trading/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tradeId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'accept_failed');
 
-      if (error) throw error;
-
-      // Filtramos el trato aceptado de la interfaz para que desaparezca en caliente
       setTradesList(tradesList.filter(t => t.id !== tradeId));
       alert("¡Intercambio realizado con éxito! El cromo ha sido movido a tu colección. 🤝");
     } catch (error: unknown) {
@@ -158,38 +147,22 @@ export default function TradingModule({
     
     setIsSubmittingAuction(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const newAuctionId = crypto.randomUUID();
-
-      // Calcular tiempo de expiración
-      const expiresAtDate = new Date();
-      expiresAtDate.setMinutes(expiresAtDate.getMinutes() + durationMinutes);
-
-      const { error } = await supabase
-        .from("auctions")
-        .insert([
-          {
-            id: newAuctionId,
-            sticker_id: auctionSticker,
-            seller_id: user?.id || null,
-            min_bet: minBet,
-            highest_bid: minBet,
-            status: "active",
-            expires_at: expiresAtDate.toISOString()
-          }
-        ]);
-
-      if (error) throw error;
+      const res = await fetch('/api/trading/start-auction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stickerId: auctionSticker, minBet, durationMinutes }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'auction_failed');
 
       const stickerObj = allStickers.find(s => s.id === auctionSticker);
-
       const newAuction: Auction = {
-        id: newAuctionId,
+        id: data.id,
         sticker_name: stickerObj?.name || "Cromo en Subasta",
         seller_name: "Tú",
         highest_bid: minBet,
-        expires_at: expiresAtDate.toISOString(),
-        status: "active"
+        expires_at: new Date(Date.now() + durationMinutes * 60000).toISOString(),
+        status: "active",
       };
 
       setAuctionsList([newAuction, ...auctionsList]);
@@ -201,6 +174,53 @@ export default function TradingModule({
       alert(`Error al iniciar subasta: ${errMsg}`);
     } finally {
       setIsSubmittingAuction(false);
+    }
+  };
+
+  // Enviar puja al servidor usando el endpoint que llama a la RPC `place_bid`
+  const handlePlaceBid = async (auctionId: string) => {
+    const bidAmount = bids[auctionId];
+    if (!bidAmount || bidAmount <= 0) return alert('Ingresa un monto válido');
+    setSubmittingBidFor(auctionId);
+    try {
+      const res = await fetch('/api/trading/place-bid', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auctionId, bid: bidAmount }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'bid_failed');
+
+      // Actualizar UI: aumentar highest_bid para esa subasta
+      setAuctionsList(prev => prev.map(a => a.id === auctionId ? { ...a, highest_bid: bidAmount } : a));
+      alert('Puja enviada con éxito 🎉');
+    } catch (err) {
+      console.error('place bid error', err);
+      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      alert(`Error al pujar: ${msg}`);
+    } finally {
+      setSubmittingBidFor(null);
+    }
+  };
+
+  const handleFinalizeExpired = async () => {
+    setIsFinalizingExpired(true);
+    try {
+      const res = await fetch('/api/trading/finalize-expired', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'finalize_failed');
+
+      setAuctionsList(prev => prev.filter(a => new Date(a.expires_at) > new Date()));
+      alert(`Se finalizaron ${data.detail?.finalized_count ?? 0} subastas expiradas.`);
+    } catch (err) {
+      console.error('finalize expired error', err);
+      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      alert(`Error al finalizar subastas: ${msg}`);
+    } finally {
+      setIsFinalizingExpired(false);
     }
   };
 
@@ -345,7 +365,16 @@ export default function TradingModule({
             </div>
 
             <div className="md:col-span-2 bg-slate-900/40 border border-slate-800 p-5 rounded-2xl">
-              <h3 className="text-base font-bold text-slate-300 mb-4">Subastas Activas</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                <h3 className="text-base font-bold text-slate-300">Subastas Activas</h3>
+                <button
+                  onClick={handleFinalizeExpired}
+                  disabled={isFinalizingExpired}
+                  className="self-start bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2 px-3 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {isFinalizingExpired ? 'Finalizando...' : 'Finalizar Expiradas'}
+                </button>
+              </div>
               {auctionsList.length === 0 ? (
                 <div className="text-center py-12 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">No hay subastas en vivo en este momento.</div>
               ) : (
@@ -365,8 +394,19 @@ export default function TradingModule({
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <input type="number" placeholder="+10" className="w-20 bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white font-bold" />
-                        <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition">Pujar</button>
+                        <input
+                          type="number"
+                          value={bids[auction.id] ?? (auction.highest_bid + 10)}
+                          onChange={(e) => setBids(prev => ({ ...prev, [auction.id]: parseInt(e.target.value || '0') }))}
+                          className="w-20 bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-xs text-white font-bold"
+                        />
+                        <button
+                          onClick={() => handlePlaceBid(auction.id)}
+                          disabled={submittingBidFor === auction.id}
+                          className={`flex-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs py-2 px-3 rounded-lg transition ${submittingBidFor === auction.id ? 'opacity-50 cursor-wait' : ''}`}
+                        >
+                          {submittingBidFor === auction.id ? 'Pujando...' : 'Pujar'}
+                        </button>
                       </div>
                     </div>
                   ))}
