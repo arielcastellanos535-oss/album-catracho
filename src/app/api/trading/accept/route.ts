@@ -22,8 +22,6 @@ export async function POST(req: Request) {
     if (trade.status !== "pending") return NextResponse.json({ error: "trade_not_pending" }, { status: 400 });
     if (trade.user_id === user.id) return NextResponse.json({ error: "cannot_accept_own_trade" }, { status: 403 });
 
-    const sellerId = trade.user_id;
-    const offeredStickerId = trade.sticker_id_offered;
     const wantedStickerId = trade.sticker_id_wanted;
 
     // Verificaciones: comprador (user) debe poseer wantedSticker y no estar pegado si qty ===1
@@ -47,28 +45,8 @@ export async function POST(req: Request) {
       if ((slot?.length ?? 0) > 0) return NextResponse.json({ error: "buyer_wanted_pasted" }, { status: 400 });
     }
 
-    // Verificar que el vendedor aún tenga el ofrecido
-    const { data: sellerRowsRaw } = await supabase
-      .from("user_stickers")
-      .select("id, quantity, sticker_id")
-      .eq("user_id", sellerId)
-      .eq("sticker_id", offeredStickerId)
-      .limit(1);
-    const sellerRows = sellerRowsRaw as { id: string; quantity: number; sticker_id: string }[] | null;
-    const sellerRow = sellerRows?.[0] ?? null;
-    if (!sellerRow || sellerRow.quantity <= 0) return NextResponse.json({ error: "seller_no_longer_has" }, { status: 400 });
-    if (sellerRow.quantity === 1) {
-      const { data: slotRaw } = await supabase
-        .from("user_album_slots")
-        .select("id")
-        .eq("user_id", sellerId)
-        .eq("sticker_id", offeredStickerId)
-        .limit(1);
-      const slot = slotRaw as { id: string }[] | null;
-      if ((slot?.length ?? 0) > 0) return NextResponse.json({ error: "seller_offered_pasted" }, { status: 400 });
-    }
-
-    // Ejecutar RPC atómico en la base de datos (ejecuta la transferencia y marca accepted)
+    // El vendedor puede estar protegido por RLS en user_stickers, así que delegamos
+    // la validación y la transferencia al RPC atómico `execute_trade`.
     const { data: rpcData, error: rpcError } = await supabase.rpc('execute_trade', { p_trade_id: tradeId });
     if (rpcError) {
       console.error('RPC error', rpcError);
