@@ -11,6 +11,12 @@ interface SupabaseStickerJoin {
   } | null;
 }
 
+interface StickerCatalogRow {
+  id: string;
+  name: string;
+  department_id: string;
+}
+
 // Interfaces de tipado estricto para evitar el uso de 'any'
 interface SupabaseTradeRow {
   id: string;
@@ -52,7 +58,7 @@ export default async function TradingPage() {
 
   const typedStickers = (userStickersRaw as unknown as SupabaseStickerJoin[]) || [];
 
-  const allStickers = typedStickers
+  const ownedStickers = typedStickers
     .map((us) => {
       if (!us.stickers) return null;
       return {
@@ -63,6 +69,17 @@ export default async function TradingPage() {
       };
     })
     .filter((s): s is { id: string; name: string; department_id: string; quantity: number } => s !== null);
+
+  const { data: stickerCatalogRaw } = await supabase
+    .from("stickers")
+    .select("id, name, department_id");
+
+  const stickerCatalog = (stickerCatalogRaw as unknown as StickerCatalogRow[])?.map((sticker) => ({
+    id: sticker.id,
+    name: sticker.name,
+    department_id: sticker.department_id,
+    quantity: ownedStickers.find((owned) => owned.id === sticker.id)?.quantity || 0,
+  })) || [];
 
   // 3. Leer desde tu tabla real 'trade_offers' con tipado explícito
   const { data: activeTradesRaw } = await supabase
@@ -100,7 +117,8 @@ export default async function TradingPage() {
       status,
       stickers(name)
     `)
-    .eq("status", "active");
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString());
 
   const typedAuctions = (activeAuctionsRaw as unknown as SupabaseAuctionRow[]) || [];
 
@@ -120,7 +138,8 @@ export default async function TradingPage() {
     <main className="min-h-screen bg-slate-950 px-4 py-8 md:px-8">
       <TradingModule 
         departments={departments || []} 
-        allStickers={allStickers} 
+        ownedStickers={ownedStickers}
+        stickerCatalog={stickerCatalog}
         activeAuctions={activeAuctions}
         activeTrades={activeTrades}
       />

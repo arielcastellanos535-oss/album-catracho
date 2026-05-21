@@ -31,12 +31,14 @@ interface TradeOffer {
 
 export default function TradingModule({ 
   departments = [], 
-  allStickers = [],
+  ownedStickers = [],
+  stickerCatalog = [],
   activeAuctions = [],
   activeTrades = []
 }: { 
-  departments: Department[]; 
-  allStickers: Sticker[];
+  departments: Department[];
+  ownedStickers: Sticker[];
+  stickerCatalog: Sticker[];
   activeAuctions: Auction[];
   activeTrades: TradeOffer[];
 }) {
@@ -71,16 +73,16 @@ export default function TradingModule({
   // Filtrado de municipios por departamento
   useEffect(() => {
     if (selectedDept) {
-      const filtered = allStickers.filter(s => s.department_id === selectedDept);
+      const filtered = stickerCatalog.filter(s => s.department_id === selectedDept);
       setFilteredStickers(filtered);
     } else {
       setFilteredStickers([]);
     }
     setWantedSticker('');
-  }, [selectedDept, allStickers]);
+  }, [selectedDept, stickerCatalog]);
 
   // Regrera los cromos que el usuario puede ofrecer (cantidad > 1)
-  const userTradableStickers = allStickers.filter(s => s.quantity > 1);
+  const userTradableStickers = ownedStickers.filter(s => s.quantity > 1);
 
   // 📢 PUBLICAR OFERTA EN TRADE_OFFERS
   const handlePublishOffer = async () => {
@@ -96,8 +98,8 @@ export default function TradingModule({
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'publish_failed');
 
-      const offStickerObj = allStickers.find(s => s.id === offeredSticker);
-      const wanStickerObj = allStickers.find(s => s.id === wantedSticker);
+      const offStickerObj = ownedStickers.find(s => s.id === offeredSticker);
+      const wanStickerObj = stickerCatalog.find(s => s.id === wantedSticker);
 
       const newOffer: TradeOffer = {
         id: data.id,
@@ -155,7 +157,7 @@ export default function TradingModule({
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'auction_failed');
 
-      const stickerObj = allStickers.find(s => s.id === auctionSticker);
+      const stickerObj = ownedStickers.find(s => s.id === auctionSticker);
       const newAuction: Auction = {
         id: data.id,
         sticker_name: stickerObj?.name || "Cromo en Subasta",
