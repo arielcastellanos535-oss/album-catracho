@@ -7,6 +7,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 const links = [
   { href: "/album", label: "Álbum" },
   { href: "/packs", label: "Sobres" },
+  { href: "/coins", label: "Monedas" },
   { href: "/collection", label: "Mis cromos" },
   { href: "/trading", label: "Intercambios" }, // 🔄 ¡El nuevo motor del mercado añadido aquí!
   { href: "/progress", label: "Progreso" },

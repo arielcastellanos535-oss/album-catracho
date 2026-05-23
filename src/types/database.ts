@@ -30,6 +30,20 @@ export type UserProfile = {
   coins: number;
   packs_opened_today: number;
   last_pack_date: string | null;
+  coins_claimed_today: number;
+  last_coin_date: string | null;
+};
+
+export type CoinDashboard = {
+  current_balance: number;
+  initial_coins: number;
+  coins_earned: number;
+  coins_spent: number;
+  frozen_coins: number;
+  coins_available: number;
+  daily_coins_today: number;
+  daily_claimable: boolean;
+  next_claim_at: string;
 };
 
 export type UserSticker = {
