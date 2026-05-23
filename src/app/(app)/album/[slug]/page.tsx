@@ -26,7 +26,7 @@ export default async function DepartmentAlbumPage({ params }: Props) {
     notFound();
   }
 
-  if (!department.is_mvp_active) notFound();
+  if (!department.is_mvp_active && department.slots_count <= 0) notFound();
 
   const stickers = await getStickersForDepartment(department.id);
   const [userStickers, albumSlots, ad] = await Promise.all([

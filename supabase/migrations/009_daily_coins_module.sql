@@ -91,7 +91,11 @@ DECLARE
   totals RECORD;
   frozen INT := 0;
   next_claim TIMESTAMPTZ;
+  next_pack TIMESTAMPTZ;
   initial_coins INT := 0;
+  user_packs_today INT := 0;
+  packs_remaining_today INT := 0;
+  daily_pack_claimable BOOLEAN := false;
 BEGIN
   IF uid IS NULL THEN
     RAISE EXCEPTION 'not_authenticated';
@@ -109,7 +113,11 @@ BEGIN
       'coins_available', 0,
       'daily_coins_today', 0,
       'daily_claimable', true,
-      'next_claim_at', (timezone('America/Tegucigalpa', now())::date + interval '1 day')
+      'next_claim_at', (timezone('America/Tegucigalpa', now())::date + interval '1 day'),
+      'daily_packs_today', 0,
+      'packs_remaining_today', 2,
+      'daily_pack_claimable', true,
+      'next_pack_at', (timezone('America/Tegucigalpa', now())::date + interval '1 day')
     );
   END IF;
 
@@ -128,7 +136,16 @@ BEGIN
   FROM public.coin_transactions
   WHERE user_id = uid AND category = 'initial';
 
+  IF prof.last_pack_date IS DISTINCT FROM today THEN
+    user_packs_today := 0;
+  ELSE
+    user_packs_today := prof.packs_opened_today;
+  END IF;
+
+  packs_remaining_today := GREATEST(0, 2 - user_packs_today);
+  daily_pack_claimable := user_packs_today < 2;
   next_claim := (timezone('America/Tegucigalpa', now())::date + interval '1 day');
+  next_pack := next_claim;
 
   RETURN jsonb_build_object(
     'current_balance', prof.coins,
@@ -139,7 +156,11 @@ BEGIN
     'coins_available', prof.coins - frozen,
     'daily_coins_today', COALESCE(prof.coins_claimed_today, 0),
     'daily_claimable', prof.last_coin_date IS DISTINCT FROM today,
-    'next_claim_at', next_claim
+    'next_claim_at', next_claim,
+    'daily_packs_today', user_packs_today,
+    'packs_remaining_today', packs_remaining_today,
+    'daily_pack_claimable', daily_pack_claimable,
+    'next_pack_at', next_pack
   );
 END;
 $$;
@@ -252,6 +273,9 @@ WHERE NOT EXISTS (
 );
 
 ALTER TABLE IF EXISTS public.coin_transactions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS coin_transactions_select_own ON public.coin_transactions;
+DROP POLICY IF EXISTS coin_transactions_insert_own ON public.coin_transactions;
 
 CREATE POLICY coin_transactions_select_own ON public.coin_transactions
   FOR SELECT TO authenticated

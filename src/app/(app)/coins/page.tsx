@@ -23,7 +23,8 @@ export default async function CoinsPage() {
         <h1 className="font-display text-3xl font-bold">Monedas</h1>
         <p className="text-muted">
           3 monedas gratis cada día. No son acumulables: si no las reclamas hoy,
-          se pierden y podrás obtener otras mañana.
+          se pierden y podrás obtener otras mañana. También verás tus sobres
+          gratis y el próximo reinicio diario.
         </p>
       </header>
 

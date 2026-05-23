@@ -9,7 +9,12 @@ export function DepartmentGrid({ departments }: Props) {
   return (
     <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {departments.map((d) => {
-        const active = d.is_mvp_active;
+        const active = d.is_mvp_active || d.slots_count > 0;
+        const label = active
+          ? d.municipalities_count && d.municipalities_count > 0
+            ? `${d.slots_count} cromos · ${d.municipalities_count} municipios`
+            : `${d.slots_count} cromos MVP`
+          : "Próximamente";
         const inner = (
           <article
             className={`rounded-xl border p-4 transition ${
@@ -22,9 +27,7 @@ export function DepartmentGrid({ departments }: Props) {
             {d.fact_title && (
               <p className="mt-1 text-sm text-muted">{d.fact_title}</p>
             )}
-            <p className="mt-2 text-xs">
-              {active ? `${d.slots_count} cromos MVP` : "Próximamente"}
-            </p>
+            <p className="mt-2 text-xs">{label}</p>
           </article>
         );
 

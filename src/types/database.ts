@@ -7,6 +7,7 @@ export type Department = {
   slug: string;
   page_order: number;
   slots_count: number;
+  municipalities_count?: number;
   is_mvp_active: boolean;
   fact_title: string | null;
 };

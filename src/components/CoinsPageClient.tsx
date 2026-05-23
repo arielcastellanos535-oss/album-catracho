@@ -54,9 +54,20 @@ export function CoinsPageClient({ initialDashboard }: Props) {
         minute: "2-digit",
       });
 
+  const nextPackDate = new Date(dashboard.next_pack_at);
+  const nextPackLabel = dashboard.daily_pack_claimable
+    ? "Disponible ahora"
+    : nextPackDate.toLocaleString("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <article className="rounded-3xl border border-border bg-surface p-6">
           <p className="text-sm text-muted">Saldo actual</p>
           <p className="font-display text-4xl font-bold text-gold">{dashboard.current_balance}</p>
@@ -75,6 +86,17 @@ export function CoinsPageClient({ initialDashboard }: Props) {
           <p className="mt-2 text-sm text-muted">
             Reclamadas hoy: {dashboard.daily_coins_today} / 3
           </p>
+        </article>
+        <article className="rounded-3xl border border-border bg-surface p-6">
+          <p className="text-sm text-muted">Sobres gratis restantes</p>
+          <p className="font-display text-4xl font-bold">{dashboard.packs_remaining_today}</p>
+          <p className="mt-2 text-sm text-muted">
+            Abiertos hoy: {dashboard.daily_packs_today} / 2
+          </p>
+        </article>
+        <article className="rounded-3xl border border-border bg-surface p-6">
+          <p className="text-sm text-muted">Próximo sobre gratis</p>
+          <p className="font-display text-2xl font-bold">{nextPackLabel}</p>
         </article>
       </div>
 

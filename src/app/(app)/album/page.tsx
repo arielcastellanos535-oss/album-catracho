@@ -9,7 +9,8 @@ export default async function AlbumIndexPage() {
       <header>
         <h1 className="font-display text-3xl font-bold">Álbum de Honduras</h1>
         <p className="text-muted">
-          18 departamentos — MVP con Cortés, Francisco Morazán y edición especial.
+          {departments.length} departamentos — desbloquea nuevas páginas por
+          municipio y sigue avanzando hacia Heroes y Salón de la fama.
         </p>
       </header>
       <DepartmentGrid departments={departments} />
