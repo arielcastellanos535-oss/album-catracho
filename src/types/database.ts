@@ -45,6 +45,10 @@ export type CoinDashboard = {
   daily_coins_today: number;
   daily_claimable: boolean;
   next_claim_at: string;
+  daily_packs_today: number;
+  packs_remaining_today: number;
+  daily_pack_claimable: boolean;
+  next_pack_at: string;
 };
 
 export type UserSticker = {
